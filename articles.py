@@ -1,0 +1,1 @@
+from dataPrep.import_data import ARTICLES
