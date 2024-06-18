@@ -1,0 +1,38 @@
+:root {
+  --primary-color: #212121;
+  --primary-color-tone: #171717;
+  --secondary-color: #010d3f;
+  --text-color: #ffffff;
+  --border-color: #00ff00;
+  --prompt-color: #2f2f2f;
+}
+
+.light-theme {
+  --primary-color: #ffffff;
+  --primary-color-tone: #e3e3e3;
+  --secondary-color: #010d3f;
+  --text-color: #000000;
+  --border-color: #00ff00;
+  --prompt-color: #2f2f2f;
+}
+
+@font-face {
+  font-family: "Aptos";
+  src: url(../fonts/Aptos-Light.ttf);
+}
+body {
+  font-family: "Aptos" !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+body > * {
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800 !important;
+}/*# sourceMappingURL=styles.css.map */

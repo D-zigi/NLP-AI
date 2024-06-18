@@ -1,0 +1,17 @@
+@mixin light-theme {
+    --primary-color: #{$light-primary-color};
+    --primary-color-tone: #{$light-primary-color-tone};
+    --secondary-color: #{$light-secondary-color};
+    --text-color: #{$light-text-color};
+    --border-color: #{$light-border-color};
+    --prompt-color: #{$light-prompt-color};
+}
+  
+@mixin dark-theme {
+    --primary-color: #{$dark-primary-color};
+    --primary-color-tone: #{$dark-primary-color-tone};
+    --secondary-color: #{$dark-secondary-color};
+    --text-color: #{$dark-text-color};
+    --border-color: #{$dark-border-color};
+    --prompt-color: #{$dark-prompt-color};
+}

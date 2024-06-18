@@ -1,0 +1,31 @@
+#after-header {
+  margin-top: 100px;
+}
+
+.header {
+  background-color: #345; /* Change this to your desired background color */
+  color: #fff; /* Change this to your desired text color */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+.nav-links a {
+  color: #fff; /* Change this to your desired link color */
+  text-decoration: none;
+  margin-left: 20px; /* Adjust spacing between links */
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.nav-links .active {
+  font-weight: bold; /* Style for the active link */
+}/*# sourceMappingURL=header.css.map */

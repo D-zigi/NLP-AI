@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+    </nav>
+    <div class="chat_container">
+        <div id="messages" class="messages">{{ response | safe }}</div>
+        <div class="prompt-container">
+            <div id="prompt" class="prompt">
+                <textarea id="text-input" class="text-input" contenteditable="true" type="text", placeholder="Message Gemini"></textarea>
+            </div>
+            <span>Gemini can make mistakes. Check important info.</span>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/chat_socket.js') }}"></script>
+</body>
+</html>

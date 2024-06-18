@@ -1,10 +1,30 @@
-nltk
-pandas
-numpy
-scikit-learn
+#dotenv
+python-dotenv
+
+# web tools
+flask[async]
 flask
+markdown
+
+flask-socketio
+requests
+
+# Data import
+pandas # Data manipulation library
+Pillow # PIL image-loading library
+beautifulsoup4 # Text scraper from websites 
+
+# Math and data visualization
+numpy
 matplotlib
 seaborn
+
+#Data preprocessing and model builing for ML
+nltk # Natural Language Toolkit
+scikit-learn
 tensorflow
-requests
-beautifulsoup4
+
+
+# for Gemini
+langchain_core
+langchain-google-genai # This package contains the LangChain integrations for the Gemini API.

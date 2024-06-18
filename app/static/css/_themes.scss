@@ -1,0 +1,7 @@
+:root {
+    @include dark-theme;
+}
+  
+.light-theme {
+    @include light-theme;
+}

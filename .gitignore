@@ -1,1 +1,10 @@
 /.venv
+
+/app/__pycache__
+/app/geminiAPI/__pycache__
+/app/model_kit/__pycache__
+
+/app/static/css/header.css.map
+/app/static/css/styles.css.map
+/app/static/css/error.css.map
+/app/static/css/chat.css.map

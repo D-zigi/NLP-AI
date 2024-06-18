@@ -1,0 +1,53 @@
+FIX 1:
+google.generativeai.types.generation_types.StopCandidateException: index: 0
+content {
+  parts {
+    text: "Okay"
+  }
+  role: "model"
+}
+finish_reason: SAFETY
+safety_ratings {
+  category: HARM_CATEGORY_SEXUALLY_EXPLICIT
+  probability: HIGH
+}
+safety_ratings {
+  category: HARM_CATEGORY_HATE_SPEECH
+  probability: NEGLIGIBLE
+}
+safety_ratings {
+  category: HARM_CATEGORY_HARASSMENT
+  probability: NEGLIGIBLE
+}
+safety_ratings {
+  category: HARM_CATEGORY_DANGEROUS_CONTENT
+  probability: MEDIUM
+}
+citation_metadata {
+}
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\Alexey\Desktop\Coding\Projects\NLP emotions\app\geminiAPI\chat.py", line 40, in console_chat
+    print("Gemini: ", get_response(chat, text))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexey\Desktop\Coding\Projects\NLP emotions\app\geminiAPI\chat.py", line 32, in get_response
+    response = chat.send_message([text], stream=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexey\Desktop\Coding\Projects\NLP emotions\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 489, in send_message
+    history = self.history[:]
+              ^^^^^^^^^^^^
+  File "C:\Users\Alexey\Desktop\Coding\Projects\NLP emotions\.venv\Lib\site-packages\google\generativeai\generative_models.py", line 708, in history
+    raise generation_types.BrokenResponseError(
+google.generativeai.types.generation_types.BrokenResponseError: Can not build a coherent chat history after a broken streaming response (See the previous Exception fro details). To inspect the last response object, use `chat.last`.To remove the last request/response `Content` objects from the chat call `last_send, last_received = chat.rewind()` and continue without it.
+>>> console_chat(chat, "fix")
+Me: Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\Alexey\Desktop\Coding\Projects\NLP emotions\app\geminiAPI\chat.py", line 39, in console_chat
+    text = input("Me: ")
+
+
+FIX 2:

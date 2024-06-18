@@ -1,0 +1,89 @@
+@import 'variables';
+@import 'mixins';
+@import 'themes';
+
+//TODO media and auto sizing
+$nav_chat: calc(1 / 2.75);
+$nav_width: 260px;
+nav {
+    float: left;
+    padding: 0;
+    position: fixed;
+    min-width: $nav_width;
+    height: 100vh;
+    background-color: var(--primary-color-tone);
+}
+
+.chat_container {
+    $prompt_height: 52px;
+    float: right;
+    width: calc(100vw - $nav_width);
+    padding: 0;
+    margin: 0;
+
+    .messages {
+        overflow-y: scroll;
+        padding: 0 calc((100vw - ($nav_width / $nav_chat) - $nav_width) / 2);
+        margin: calc($prompt_height + 8px * 4) 0;
+        height: calc(100vh - 2 * ($prompt_height + 8px * 4));
+        width: calc($nav_width / $nav_chat);
+        font-size: 16px;
+
+        .client-message {
+            background-color: var(--prompt-color);
+            border-radius: calc($prompt_height / 2);
+            max-width: 60%;
+            text-wrap: normal;
+            word-wrap: break-word;
+            padding: 10px 20px;
+            margin: 10px 0;
+            float: right;
+            clear: both;
+        }
+
+        .server-message {
+            clear: both;
+        }
+    }
+
+    .prompt-container {
+        $error: 15px; //FIXME
+        position: fixed;
+        bottom: 0;
+        right: calc((100vw - ($nav_width / $nav_chat) - $nav_width) / 2 + $error);
+        width: calc($nav_width / $nav_chat - $error) !important;
+        
+        .prompt {
+            background-color: var(--prompt-color);
+            border-radius: calc($prompt_height / 2);
+            min-height: $prompt_height;
+            max-height: 50vh;
+            height: auto;
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+
+            .text-input {
+                width: 85%;
+                background-color: transparent;
+                font-family: 'Aptos' !important;
+                padding: 8px 0;
+                font-size: 18px;
+                height: 24px;
+                border: none;
+                resize: none;
+                outline: none;
+                color: var(--text-color);
+            }
+        }
+
+        span {
+            opacity: 0.5;
+            margin: 8px;
+            font-size: 12.5px;
+            display: block;
+            text-align: center;
+        }
+    }
+}
