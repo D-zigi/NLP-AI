@@ -1,0 +1,13 @@
+@mixin jumping-dots ($duration: 1.5s, $bullet_r: 5px) {
+
+    animation: jumpingDots $duration linear infinite;
+
+    @keyframes jumpingDots {
+        40% {
+            transform: translateY($bullet_r);
+        }
+        50% {
+            transform: translateY(0);
+        }
+    }
+}

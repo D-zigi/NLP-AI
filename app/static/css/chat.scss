@@ -1,48 +1,126 @@
-@import 'variables';
-@import 'mixins';
-@import 'themes';
-
 //TODO media and auto sizing
-$nav_chat: calc(1 / 2.75);
-$nav_width: 260px;
-nav {
-    float: left;
-    padding: 0;
-    position: fixed;
-    min-width: $nav_width;
-    height: 100vh;
-    background-color: var(--primary-color-tone);
-}
+$chat_width: 760px;
+$prompt_height: 52px;
 
 .chat_container {
-    $prompt_height: 52px;
-    float: right;
-    width: calc(100vw - $nav_width);
-    padding: 0;
-    margin: 0;
-
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
     .messages {
         overflow-y: scroll;
-        padding: 0 calc((100vw - ($nav_width / $nav_chat) - $nav_width) / 2);
-        margin: calc($prompt_height + 8px * 4) 0;
+        width: 100%;
         height: calc(100vh - 2 * ($prompt_height + 8px * 4));
-        width: calc($nav_width / $nav_chat);
+        padding: 0 calc((100vw - $chat_width) / 2);
         font-size: 16px;
+
+        * {
+            text-wrap: wrap;
+            word-wrap: break-word;
+        }
+
+        #welcoming {
+            h1, h2, h3, h4, h5, h6 {
+                width: fit-content;
+            }
+
+            h2 {
+                display: flex;
+                img.gemini-sparkle {
+                    margin-left: 10px;
+                    align-self: center;
+                    height: max-content;
+                    aspect-ratio: 1 / 1;
+                }
+            }
+
+            .options {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+
+                .option {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    align-items: center;
+                    img {
+                        height: 50%;
+                        filter: var(--text-color);
+                    }
+                    span {
+                        text-align: center;
+                    }
+                    width: 30%;
+                    padding: 10px;
+                    aspect-ratio: 1 / 1;
+                }
+            }
+        }
+
+        .message {
+            clear: both;
+
+            $elements_padding: 15px;
+            $b_radius: 10px;
+            pre{
+                background-color: black;
+                padding: $elements_padding;
+                padding-top: 0;
+                border-radius: $b_radius;
+
+                .code-header {
+                    background-color: var(--prompt-color);
+                    width: calc(100% + 2 * $elements_padding);
+                    margin-left: -$elements_padding;
+                    padding: calc(0.5 * $elements_padding) $elements_padding;
+                    border-radius: $b_radius $b_radius 0 0;
+                    margin-bottom: $elements_padding;
+
+                    .lang {
+                        font-size: 15px;
+                        opacity: 0.5;
+                    }
+                }
+            }
+        }
 
         .client-message {
             background-color: var(--prompt-color);
             border-radius: calc($prompt_height / 2);
             max-width: 60%;
-            text-wrap: normal;
-            word-wrap: break-word;
             padding: 10px 20px;
             margin: 10px 0;
             float: right;
-            clear: both;
+
+            * {
+                margin: 0;
+            }
         }
 
         .server-message {
-            clear: both;
+            float: left;
+            display: flex;
+            flex-direction: row;
+
+            img.gemini-sparkle {
+                height: 32px;
+                aspect-ratio: 1 / 1;
+                transform: translateY(25%);
+            }
+            .typing {
+                transform: translateY(25%);
+                padding-left: 10px;
+            }
+
+            div.gemini-response {
+                padding-left: 10px;
+                display: flex;
+                flex-direction: column;
+            }
         }
     }
 
@@ -50,14 +128,14 @@ nav {
         $error: 15px; //FIXME
         position: fixed;
         bottom: 0;
-        right: calc((100vw - ($nav_width / $nav_chat) - $nav_width) / 2 + $error);
-        width: calc($nav_width / $nav_chat - $error) !important;
+        right: 50%;
+        transform: translateX(50%);
+        width: calc($chat_width - $error);
         
         .prompt {
             background-color: var(--prompt-color);
             border-radius: calc($prompt_height / 2);
             min-height: $prompt_height;
-            max-height: 50vh;
             height: auto;
             display: flex;
             justify-content: space-around;
@@ -65,20 +143,24 @@ nav {
             align-items: center;
 
             .text-input {
-                width: 85%;
-                background-color: transparent;
-                font-family: 'Aptos' !important;
-                padding: 8px 0;
+                display: block;
+                width: 80%;
+                overflow: hidden;
+                margin: 8px 0;
                 font-size: 18px;
-                height: 24px;
+                min-height: 24px;
+                max-height: 50vh;
                 border: none;
-                resize: none;
                 outline: none;
                 color: var(--text-color);
             }
+            .text-input[contenteditable]:empty::before {
+                content: "Message Gemini";
+                opacity: 0.5;
+            }
         }
 
-        span {
+        > span {
             opacity: 0.5;
             margin: 8px;
             font-size: 12.5px;

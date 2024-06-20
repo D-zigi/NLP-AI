@@ -40,9 +40,13 @@ def get_response(chat, text, image=None):
     """
     gets a response from the chat
     """
-    response = chat.send_message([text], stream=True)
-    response.resolve()
-    return response.text
+    try:
+        response = chat.send_message([text], stream=True)
+        response.resolve()
+        return response.text
+    except Exception as e:
+        print(e)
+        return f"<span style='color: red;'> ERROR: Unable to get response from GeminiAPI <span>"
 
 
 def console_chat(chat):

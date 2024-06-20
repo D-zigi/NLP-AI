@@ -1,25 +1,66 @@
 @import 'variables';
 @import 'mixins';
 @import 'themes';
+@import 'animations';
+@import 'fonts';
 
-@font-face {
-    font-family: 'Aptos';
-    src: url(../fonts/Aptos-Light.ttf);
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     font-family: 'Aptos' !important;
-    box-sizing: border-box;;
-    margin: 0;
-    padding: 0;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color) !important;
     color: var(--text-color);
-    >* {
-        padding-left: 100px;
-        padding-right: 100px;
-    }
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 800 !important;
+}
+
+.gemini-gradient-text {
+    @include gemini_gradient_text;
+}
+
+
+.glass{
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border:1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);
+}
+
+#gemini_response_common {display: none !important;}
+.typing {
+    user-select: none;
+    pointer-events: none;
+
+    span {
+        $bullet_r: 5px;
+        width: $bullet_r;
+        height: $bullet_r;
+        margin: 0 calc($bullet_r / 5);
+        background-color: var(--text-color);
+        border-radius: 50%;
+        display: inline-block;
+
+        @include jumping-dots(1.5s, $bullet_r);
+    }
+
+    span:nth-child(2) {
+        animation-delay: 0.4s
+    }
+    span:nth-child(3) {
+        animation-delay: 0.8s
+    }
+}
+
+.opening {
+    //TODO
 }

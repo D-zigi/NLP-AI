@@ -1,69 +1,120 @@
-:root {
-  --primary-color: #212121;
-  --primary-color-tone: #171717;
-  --secondary-color: #010d3f;
-  --text-color: #ffffff;
-  --border-color: #00ff00;
-  --prompt-color: #2f2f2f;
-}
-
-.light-theme {
-  --primary-color: #ffffff;
-  --primary-color-tone: #e3e3e3;
-  --secondary-color: #010d3f;
-  --text-color: #000000;
-  --border-color: #00ff00;
-  --prompt-color: #2f2f2f;
-}
-
-nav {
-  float: left;
-  padding: 0;
-  position: fixed;
-  min-width: 260px;
-  height: 100vh;
-  background-color: var(--primary-color-tone);
-}
-
 .chat_container {
-  float: right;
-  width: calc(100vw - 260px);
-  padding: 0;
-  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
 .chat_container .messages {
   overflow-y: scroll;
-  padding: 0 calc((100vw - 715px - 260px) / 2);
-  margin: 84px 0;
+  width: 100%;
   height: calc(100vh - 168px);
-  width: 715px;
+  padding: 0 calc((100vw - 760px) / 2);
   font-size: 16px;
+}
+.chat_container .messages * {
+  text-wrap: wrap;
+  word-wrap: break-word;
+}
+.chat_container .messages #welcoming h1, .chat_container .messages #welcoming h2, .chat_container .messages #welcoming h3, .chat_container .messages #welcoming h4, .chat_container .messages #welcoming h5, .chat_container .messages #welcoming h6 {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.chat_container .messages #welcoming h2 {
+  display: flex;
+}
+.chat_container .messages #welcoming h2 img.gemini-sparkle {
+  margin-left: 10px;
+  align-self: center;
+  height: -moz-max-content;
+  height: max-content;
+  aspect-ratio: 1/1;
+}
+.chat_container .messages #welcoming .options {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.chat_container .messages #welcoming .options .option {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 30%;
+  padding: 10px;
+  aspect-ratio: 1/1;
+}
+.chat_container .messages #welcoming .options .option img {
+  height: 50%;
+  filter: var(--text-color);
+}
+.chat_container .messages #welcoming .options .option span {
+  text-align: center;
+}
+.chat_container .messages .message {
+  clear: both;
+}
+.chat_container .messages .message pre {
+  background-color: black;
+  padding: 15px;
+  padding-top: 0;
+  border-radius: 10px;
+}
+.chat_container .messages .message pre .code-header {
+  background-color: var(--prompt-color);
+  width: calc(100% + 30px);
+  margin-left: -15px;
+  padding: 7.5px 15px;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 15px;
+}
+.chat_container .messages .message pre .code-header .lang {
+  font-size: 15px;
+  opacity: 0.5;
 }
 .chat_container .messages .client-message {
   background-color: var(--prompt-color);
   border-radius: 26px;
   max-width: 60%;
-  text-wrap: normal;
-  word-wrap: break-word;
   padding: 10px 20px;
   margin: 10px 0;
   float: right;
-  clear: both;
+}
+.chat_container .messages .client-message * {
+  margin: 0;
 }
 .chat_container .messages .server-message {
-  clear: both;
+  float: left;
+  display: flex;
+  flex-direction: row;
+}
+.chat_container .messages .server-message img.gemini-sparkle {
+  height: 32px;
+  aspect-ratio: 1/1;
+  transform: translateY(25%);
+}
+.chat_container .messages .server-message .typing {
+  transform: translateY(25%);
+  padding-left: 10px;
+}
+.chat_container .messages .server-message div.gemini-response {
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .chat_container .prompt-container {
   position: fixed;
   bottom: 0;
-  right: calc((100vw - 715px - 260px) / 2 + 15px);
-  width: 700px !important;
+  right: 50%;
+  transform: translateX(50%);
+  width: 745px;
 }
 .chat_container .prompt-container .prompt {
   background-color: var(--prompt-color);
   border-radius: 26px;
   min-height: 52px;
-  max-height: 50vh;
   height: auto;
   display: flex;
   justify-content: space-around;
@@ -71,18 +122,22 @@ nav {
   align-items: center;
 }
 .chat_container .prompt-container .prompt .text-input {
-  width: 85%;
-  background-color: transparent;
-  font-family: "Aptos" !important;
-  padding: 8px 0;
+  display: block;
+  width: 80%;
+  overflow: hidden;
+  margin: 8px 0;
   font-size: 18px;
-  height: 24px;
+  min-height: 24px;
+  max-height: 50vh;
   border: none;
-  resize: none;
   outline: none;
   color: var(--text-color);
 }
-.chat_container .prompt-container span {
+.chat_container .prompt-container .prompt .text-input[contenteditable]:empty::before {
+  content: "Message Gemini";
+  opacity: 0.5;
+}
+.chat_container .prompt-container > span {
   opacity: 0.5;
   margin: 8px;
   font-size: 12.5px;

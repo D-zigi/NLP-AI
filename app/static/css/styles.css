@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #212121;
+  --primary-color: #252525;
   --primary-color-tone: #171717;
   --secondary-color: #010d3f;
   --text-color: #ffffff;
@@ -20,19 +20,70 @@
   font-family: "Aptos";
   src: url(../fonts/Aptos-Light.ttf);
 }
-body {
-  font-family: "Aptos" !important;
-  box-sizing: border-box;
+html, body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  background-color: var(--primary-color);
-  color: var(--text-color);
+  box-sizing: border-box;
 }
-body > * {
-  padding-left: 100px;
-  padding-right: 100px;
+
+body {
+  font-family: "Aptos" !important;
+  background-color: var(--primary-color) !important;
+  color: var(--text-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 800 !important;
+}
+
+.gemini-gradient-text {
+  background: -webkit-linear-gradient(-45deg, #9168C0, #5684D1, #1BA1E3);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);
+}
+
+#gemini_response_common {
+  display: none !important;
+}
+
+.typing {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  pointer-events: none;
+}
+.typing span {
+  width: 5px;
+  height: 5px;
+  margin: 0 1px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+  display: inline-block;
+  animation: jumpingDots 1.5s linear infinite;
+}
+@keyframes jumpingDots {
+  40% {
+    transform: translateY(5px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+.typing span:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.typing span:nth-child(3) {
+  animation-delay: 0.8s;
 }/*# sourceMappingURL=styles.css.map */

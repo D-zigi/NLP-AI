@@ -5,6 +5,7 @@ python-dotenv
 flask[async]
 flask
 markdown
+html-sanitizer
 
 flask-socketio
 requests
