@@ -1,19 +1,17 @@
 :root {
-  --primary-color: #252525;
-  --primary-color-tone: #171717;
-  --secondary-color: #010d3f;
-  --text-color: #ffffff;
-  --border-color: #00ff00;
-  --prompt-color: #2f2f2f;
+  --primary-color: rgb(24, 24, 24);
+  --secondary-color: rgb(1, 13, 63);
+  --text-color: rgb(255, 255, 255);
+  --border-color: #494949;
+  --prompt-color: rgb(47, 47, 47);
 }
 
 .light-theme {
-  --primary-color: #ffffff;
-  --primary-color-tone: #e3e3e3;
-  --secondary-color: #010d3f;
-  --text-color: #000000;
-  --border-color: #00ff00;
-  --prompt-color: #2f2f2f;
+  --primary-color: rgb(245, 245, 245);
+  --secondary-color: rgb(224, 224, 255);
+  --text-color: rgb(50, 50, 50);
+  --border-color: #b9b9b9;
+  --prompt-color: rgb(210, 210, 210);
 }
 
 @font-face {
@@ -31,37 +29,59 @@ html, body {
 body {
   font-family: "Aptos" !important;
   background-color: var(--primary-color) !important;
-  color: var(--text-color);
+  color: var(--text-color) !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 800 !important;
 }
 
-.gemini-gradient-text {
-  background: -webkit-linear-gradient(-45deg, #9168C0, #5684D1, #1BA1E3);
-  -webkit-background-clip: text;
-          background-clip: text;
-  -webkit-text-fill-color: transparent;
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.hidden {
+  opacity: 0 !important;
+  display: none !important;
+}
+
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
 }
 
 .glass {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  -moz-backdrop-filter: blur(10px);
+  -o-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);
 }
 
-#gemini_response_common {
-  display: none !important;
-}
-
 .typing {
   -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  -ms-pointer-events: none;
+  -o-pointer-events: none;
   pointer-events: none;
 }
 .typing span {

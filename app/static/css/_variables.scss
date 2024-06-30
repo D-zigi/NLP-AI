@@ -1,15 +1,14 @@
 // Light theme variables
-$light-primary-color: #ffffff; //TODO
-$light-primary-color-tone: #e3e3e3; //TODO
-$light-secondary-color: #010d3f; //TODO
-$light-text-color: #000000; //TODO
-$light-border-color: #00ff00; //TODO
-$light-prompt-color: #2f2f2f; //TODO
+$light-primary-color: rgb(245, 245, 245);
+$light-secondary-color: rgb(224, 224, 255);
+$light-text-color: rgb(50, 50, 50);
+$light-prompt-color: rgb(210, 210, 210);
+$light-border-color: darken($light-prompt-color, 10%);
+
 
 // Dark theme variables
-$dark-primary-color: #252525;
-$dark-primary-color-tone: #171717;
-$dark-secondary-color: #010d3f;
-$dark-text-color: #ffffff;
-$dark-border-color: #00ff00;
-$dark-prompt-color: #2f2f2f;
+$dark-primary-color: rgb(24, 24, 24);
+$dark-secondary-color: rgb(1, 13, 63);
+$dark-text-color: rgb(255, 255, 255);
+$dark-prompt-color: rgb(47, 47, 47);
+$dark-border-color: lighten($dark-prompt-color, 10%);

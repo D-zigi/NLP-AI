@@ -1,6 +1,8 @@
 /.venv
 .env
+.hintrc
 
+/app/fix.txt
 /app/__pycache__
 /app/geminiAPI/__pycache__
 /app/model_kit/__pycache__

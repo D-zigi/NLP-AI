@@ -1,6 +1,5 @@
 @mixin light-theme {
     --primary-color: #{$light-primary-color};
-    --primary-color-tone: #{$light-primary-color-tone};
     --secondary-color: #{$light-secondary-color};
     --text-color: #{$light-text-color};
     --border-color: #{$light-border-color};
@@ -9,7 +8,6 @@
   
 @mixin dark-theme {
     --primary-color: #{$dark-primary-color};
-    --primary-color-tone: #{$dark-primary-color-tone};
     --secondary-color: #{$dark-secondary-color};
     --text-color: #{$dark-text-color};
     --border-color: #{$dark-border-color};
@@ -17,17 +15,69 @@
 }
 
 
+// Vendor prefixes for various properties
+@mixin vendor-prefix($property, $value) {
+    -webkit-#{$property}: $value;
+    -moz-#{$property}: $value;
+    -ms-#{$property}: $value;
+    -o-#{$property}: $value;
+    #{$property}: $value;
+}
 
-//Gemini gradienr
+
+//Gemini gradient
 $g-color1: #9168C0;
 $g-color2: #5684D1;
 $g-color3: #1BA1E3;
-@mixin gemini_gradient_text {
-    background: -webkit-linear-gradient(-45deg, $g-color1, $g-color2, $g-color3);
+
+@mixin gemini_gradient($surface) {
+    #{$surface}: linear-gradient(
+        90deg,
+        $g-color1, $g-color2, $g-color3, $g-color1 75%
+    );
+}
+
+@mixin gemini_gradient_animated($duration, $type: linear, $count: 1) {
+    @include gemini_gradient("background");
+    background-size: 200% 100%;
+    
+    @if $count == infinite {
+        animation: gradient-animation-infinite $duration $type $count;
+    }
+    @else {
+        animation: gradient-animation $duration $type $count;
+    }
+    
+    @keyframes gradient-animation {
+        0% {
+            background-position: 100% 0%;
+        }
+        100% {
+            background-position: 0% 0%;
+        }
+    }
+
+    @keyframes gradient-animation-infinite {
+        0% {
+            background-position: 100% 0%;
+        }
+        100% {
+            background-position: -100% 0%;
+        }
+    }
+}
+
+@mixin gemini_gradient_text_animated($duration, $type: linear, $count: 1) {
+    @include gemini_gradient_animated($duration, $type, $count);
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-@mixin gemini_gradient_text_animated {
 
+@mixin glass($border-radius: 20px, $color:rgb(255, 255, 255)) {
+    background: linear-gradient(135deg, rgba($color, 0.1), rgba($color, 0));
+    @include vendor-prefix(backdrop-filter, blur(10px));
+    border-radius: $border-radius;
+    border:1px solid rgba($color, 0.18);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);
 }

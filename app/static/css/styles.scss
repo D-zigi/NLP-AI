@@ -15,31 +15,49 @@ html, body {
 body {
     font-family: 'Aptos' !important;
     background-color: var(--primary-color) !important;
-    color: var(--text-color);
+    color: var(--text-color) !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 800 !important;
 }
 
-.gemini-gradient-text {
-    @include gemini_gradient_text;
+img {
+    @include vendor-prefix(user-select, none);
+    pointer-events: none;
+}
+
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.hidden {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
 }
 
 
 .glass{
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    @include vendor-prefix(backdrop-filter, blur(10px));
     border-radius: 20px;
     border:1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);
 }
 
-#gemini_response_common {display: none !important;}
 .typing {
-    user-select: none;
-    pointer-events: none;
+    @include vendor-prefix(user-select, none);
+    @include vendor-prefix(pointer-events, none);
 
     span {
         $bullet_r: 5px;

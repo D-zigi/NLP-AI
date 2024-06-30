@@ -1,75 +1,272 @@
-//TODO media and auto sizing
-$chat_width: 760px;
-$prompt_height: 52px;
+@use 'sass:math';
+@use 'sass:color';
+@import 'mixins';
+
+$chat_width: 800px;
+$small_length: 32px;
+$small_margin: 8px;
+$scrollbar_width: calc($small_length / 2);
+$prompt_height: calc($small_length + 2 * $small_margin);
+$prompt_full_height: calc($prompt_height + $small_margin * 4 + 5px);
+$header_height: $prompt_full_height;
+
+$p: 16px;
+$h1: 2.5rem;
+h1 { font-size: $h1; }
+h2 { font-size: calc($h1 / 1.333); }
+h3 { font-size: calc($h1 / (1.333 * 1.333)); }
+
+
+
+.light-theme {
+    #theme-switcher svg {
+        path:nth-child(3) {
+            fill: var(--primary-color) !important;
+            stroke: var(--text-color);
+            stroke-width: 5%;
+        }
+    }
+}
+
+
+
+#models{
+    @include glass;
+    height: auto;
+    @include vendor-prefix(width, fit-content);
+    position: absolute;
+    padding: $small_margin;
+    z-index: 10;
+
+    transition: opacity 0.05s, visibility 0.05s;
+    will-change: opacity, visibility;
+    opacity: 1;
+    visibility: visible;
+
+    .model {
+        width: 100%;
+        opacity: 0.5;
+        display: block;
+        margin: 0;
+        padding: $small_margin;
+        cursor: pointer;
+        @include vendor-prefix(user-select, none);
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+}
+@starting-style {
+    #models {
+        opacity: 0;
+    }
+}
+
+
+header {
+    width: 100vw;
+    padding: $small_margin 5vw;
+    height: $header_height;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+
+    #selected-model {
+        cursor: pointer;
+        @include vendor-prefix(user-select, none);
+        @include vendor-prefix(width, fit-content);
+        padding: $small_margin;
+        border-radius: calc($h1 / math.pow(1.333, 4) + 2 * $small_margin);
+        font-weight: 600 !important;
+        display: flex;
+        max-width: 60vw;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        * {
+            margin: 0 calc($small_margin / 4);
+        }
+
+        .model-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: clip;
+        }
+
+        &::after {
+            content: '˅';
+            font-size: $p;
+            font-weight: 100;
+            margin-left: $small_margin;
+        }
+
+        &:hover {
+            background-color: var(--prompt-color);
+        }
+    }
+
+    .header-buttons {
+        display: flex;
+        flex-direction: row;
+        .header-btn {
+            cursor: pointer;
+            @include vendor-prefix(user-select, none);
+            border-radius: 50%;
+            padding: calc($small_margin / 2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: calc($small_margin / 2);
+            transition: 0.1s;
+            
+            &:hover {
+                opacity: 0.75;
+            }
+            &:hover:active {
+                opacity: initial;
+                background-color: var(--prompt-color);
+            }
+    
+            svg {
+                height: $small_length;
+                width: $small_length;
+            }
+        }
+    
+        #download-chat svg {
+            transform: translateY(-10%);
+            path {
+                stroke: var(--text-color);
+            }
+        }
+
+        #clear-chat svg {
+            fill: var(--text-color);
+        }
+
+        #theme-switcher svg {
+            fill: var(--text-color);
+        }
+    }
+}
+
+
+div.gemini-sparkle {
+    @include gemini_gradient_animated(4s, $count: infinite);
+    -webkit-mask: url('#gemini-sparkle-mask-chat');
+    mask: url('#gemini-sparkle-mask-chat');
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    opacity: 0.5;
+    z-index: -1;
+    transform: translate(-50%,-50%);
+}
+
+
 
 .chat_container {
     width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    .messages {
-        overflow-y: scroll;
-        width: 100%;
-        height: calc(100vh - 2 * ($prompt_height + 8px * 4));
-        padding: 0 calc((100vw - $chat_width) / 2);
-        font-size: 16px;
+    height: 100dvh;
+    padding-top: $header_height;
+}
 
-        * {
-            text-wrap: wrap;
-            word-wrap: break-word;
+.messages-container {
+    width: 100%;
+    height: calc(100% - $prompt_full_height - 2 * $small_margin);
+    padding: 0 calc((100vw - $chat_width) / 2);
+    font-size: $p;
+    overflow-y: scroll;
+
+    * {
+        text-wrap: wrap;
+        word-wrap: break-word;
+    }
+
+    #welcoming {
+        margin: $small_margin;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    
+        .title {
+            * {
+                @include vendor-prefix(width, fit-content);
+            }
+    
+            img.gemini-sparkle {
+                margin-left: $small_margin;
+                align-self: center;
+                height: max-content;
+            }
+    
+            span {
+                @include gemini_gradient_text_animated(4s, $count: infinite);
+            }
         }
-
-        #welcoming {
-            h1, h2, h3, h4, h5, h6 {
-                width: fit-content;
-            }
-
-            h2 {
+    
+        .options {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        
+            .option {
+                @include glass;
+                cursor: pointer !important;
                 display: flex;
-                img.gemini-sparkle {
-                    margin-left: 10px;
-                    align-self: center;
-                    height: max-content;
-                    aspect-ratio: 1 / 1;
-                }
-            }
-
-            .options {
-                display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: space-around;
                 align-items: center;
-
-                .option {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-around;
-                    align-items: center;
-                    img {
-                        height: 50%;
-                        filter: var(--text-color);
-                    }
-                    span {
-                        text-align: center;
-                    }
-                    width: 30%;
-                    padding: 10px;
-                    aspect-ratio: 1 / 1;
+                transition: 0.1s;
+                span {
+                    text-align: center;
+                }
+                width: 30%;
+                padding: $small_margin;
+                aspect-ratio: 1 / 1;
+            }
+    
+            .logs svg {
+                fill: var(--text-color);
+                height: 50%;
+                transition: 0.05s;
+            }
+        
+            .option:hover {
+                background-color: var(--prompt-color);
+                span {
+                    @include gemini_gradient_text_animated(4s, $count: infinite);
+                    font-weight: 800;
+                }
+                svg {
+                    height: 47.5%;
                 }
             }
         }
+    }
+
+    .messages {
 
         .message {
             clear: both;
-
-            $elements_padding: 15px;
-            $b_radius: 10px;
+            
+            $elements_padding: calc($small_margin * 2);
+            $b_radius: $small_margin;
             pre{
                 background-color: black;
                 padding: $elements_padding;
                 padding-top: 0;
+                margin-top: 0;
                 border-radius: $b_radius;
 
                 .code-header {
@@ -79,93 +276,270 @@ $prompt_height: 52px;
                     padding: calc(0.5 * $elements_padding) $elements_padding;
                     border-radius: $b_radius $b_radius 0 0;
                     margin-bottom: $elements_padding;
+                    font-size: $p;
+                }
+            }
 
-                    .lang {
-                        font-size: 15px;
-                        opacity: 0.5;
-                    }
+            .file-container {
+                border-radius: $b_radius;
+                background-color: var(--prompt-color);
+                padding: $small_margin;
+                margin: $small_margin 0;
+                border: var(--border-color) 1px solid;
+
+                img {
+                    width: 100%;
+                    border-radius: $b_radius;
                 }
             }
         }
 
         .client-message {
+            @include glass;
             background-color: var(--prompt-color);
             border-radius: calc($prompt_height / 2);
             max-width: 60%;
-            padding: 10px 20px;
-            margin: 10px 0;
+            padding: $small_margin calc($small_margin * 2);
+            margin: $small_margin 0;
             float: right;
+        
+            .editable-hint {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: calc($prompt_height / 2);
+                @include vendor-prefix(backdrop-filter, blur(1px));
+                opacity: 0;
+                transition: 0.1s;
+                
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
 
             * {
                 margin: 0;
             }
         }
-
         .server-message {
             float: left;
             display: flex;
             flex-direction: row;
-
+        
             img.gemini-sparkle {
-                height: 32px;
-                aspect-ratio: 1 / 1;
-                transform: translateY(25%);
+                height: $small_length;
+                margin-top: calc(($small_length / 2 * 3 + $small_margin) / 2); //half of <p>
+                transform: translateY(calc(-1 * $small_length / 2));
             }
+        
             .typing {
-                transform: translateY(25%);
-                padding-left: 10px;
+                margin-top: calc(($small_length / 2 * 3 + $small_margin) / 2); //half of <p>
+                transform: translateY(calc(-1 * $small_length / 2));
+                padding-left: $small_margin;
             }
-
+        
             div.gemini-response {
-                padding-left: 10px;
+                padding-left: $small_margin;
                 display: flex;
                 flex-direction: column;
             }
         }
     }
 
-    .prompt-container {
-        $error: 15px; //FIXME
-        position: fixed;
-        bottom: 0;
-        right: 50%;
-        transform: translateX(50%);
-        width: calc($chat_width - $error);
-        
-        .prompt {
-            background-color: var(--prompt-color);
-            border-radius: calc($prompt_height / 2);
-            min-height: $prompt_height;
-            height: auto;
-            display: flex;
-            justify-content: space-around;
-            flex-direction: row;
-            align-items: center;
+}
 
-            .text-input {
-                display: block;
-                width: 80%;
-                overflow: hidden;
-                margin: 8px 0;
-                font-size: 18px;
-                min-height: 24px;
-                max-height: 50vh;
-                border: none;
-                outline: none;
-                color: var(--text-color);
+.prompt-container {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(100% - $scrollbar_width);
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    
+    .prompt {
+        @include glass;
+        width: calc($chat_width - $scrollbar_width);
+        background-color: var(--prompt-color);
+        border-radius: calc($prompt_height / 2);
+        min-height: $prompt_height;
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: flex-end;
+        padding: $small_margin;
+
+        $sl: math.div($small_length, 1px);
+        $svg_length: math.sqrt(math.pow(math.div($sl, 2), 2) * 2) + px;
+
+        .text-input {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            padding: 0 calc(2 *$small_margin);
+            font-size: $p;
+            min-height: calc($p + $small_margin);
+            max-height: 50dvh;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            cursor: text !important;
+            align-self: center;
+        }
+        .text-input[contenteditable]:empty::before {
+            content: "Message Gemini";
+            opacity: 0.5;
+        }
+
+        .image-input {
+            cursor: pointer !important;
+            height: $small_length;
+            transition: opacity 0.1s;
+            aspect-ratio: 1 / 1;
+            fill: var(--text-color) !important;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.5;
+
+            &:hover {
+                opacity: 1;
+                background-color: var(--prompt-color);
             }
-            .text-input[contenteditable]:empty::before {
-                content: "Message Gemini";
-                opacity: 0.5;
+        }
+        .image-input svg {
+            height: $svg_length;
+            aspect-ratio: 1 / 1;
+            $svg_color: var(--text-color);
+
+            path:nth-child(1) {
+                stroke: $svg_color !important;
+            }
+            path:nth-child(2) {
+                fill: $svg_color !important;
             }
         }
 
-        > span {
-            opacity: 0.5;
-            margin: 8px;
-            font-size: 12.5px;
-            display: block;
-            text-align: center;
+        .submit {
+            cursor: pointer !important;
+            transition: opacity 0.1s;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            height: $small_length;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .submit svg {
+            height: $svg_length;
+            width: $svg_length;
+            fill: var(--prompt-color) !important; 
+        }
+    }
+
+    > span {
+        opacity: 0.5;
+        margin: $small_margin;
+        font-size: 12.5px;
+        display: block;
+        text-align: center;
+    }
+}
+
+
+.alert {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc($prompt_full_height + $small_margin);
+    background-color: var(--prompt-color);
+    border-radius: calc($prompt_height / 2);
+    padding: $small_margin;
+    max-width: max-content;
+    width: 90vw;
+    @include glass;
+
+    &.error{
+        @include glass($color: red);
+        color: red !important;
+    }
+}
+
+
+
+::-webkit-scrollbar {
+    width: $scrollbar_width; /* Width of the scrollbar */
+}
+/* Track (the area around the scrollbar) */
+::-webkit-scrollbar-track {
+    background: var(--prompt-color);
+    border-radius: calc($scrollbar_width / 2);
+}
+/* Handle (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: calc(($scrollbar_width) / 2);
+    border: calc($scrollbar_width / 5) solid var(--prompt-color);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+
+@media screen and (max-width: $chat_width) {
+
+    ::-webkit-scrollbar { display: none; }
+
+    $chat_width: 90vw;
+    header {
+        .header-buttons {
+            #download-chat {
+                display: none;
+            }
+        }
+    }
+
+    .chat_container {
+    }
+    .messages-container {
+
+        padding: 0 calc((100vw - $chat_width) / 2);
+        
+        #welcoming {
+
+            text-align: center !important;
+            
+            h2 {
+                display: none;
+            }
+            
+            .options {
+                display: none; 
+            }
+
+        }
+
+        .message {
+            pre {
+                font-size: x-small;
+            }
+        }
+
+    }
+    .prompt-container {
+        width: 100%;
+        .prompt {
+            width: $chat_width;
         }
     }
 }

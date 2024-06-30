@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> -->
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <title>NLP-AI</title>
+        <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    </head>
+<body>
+    <header>
+        <div class="logo">
+            <img alt="my logo" src="{{ url_for('static', filename='images/logo.svg') }}">
+        </div>
+        <nav class="nav-links">
+            <a class="nav-link" href="/about">about</a>
+            <a class="nav-link" href="/visualization">Visualization</a>
+            <a class="nav-link" href="/chat">Chatbot</a>
+        </nav>
+    </header>
+    <div id="header-placeholder"></div>
+    <div id="content">
+        {% include 'about.html' %}
+    </div>
+    <footer>
+
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

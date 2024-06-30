@@ -17,3 +17,15 @@ def page_not_found(error):
         error_code = 404,
         error_message = "Page Not Found"
     ), 404
+
+@errors.app_errorhandler(403)
+def forbidden(error):
+    """
+    if page not found,
+    returns 404 alternate page
+    """
+    return render_template(
+        'error.html',
+        error_code = 403,
+        error_message = "Forbidden"
+    ), 404

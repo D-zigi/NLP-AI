@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
+    <title>GeminiAPI</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/gemini_sparkle.svg') }}">
+</head>
+<body>
+    <header>
+        <div id="selected-model">
+            {% include '/svgs/gemini_sparkle.svg' %}
+            <h5 id="model-name" class="model-name">{{ default_model }}</h5>
+        </div>
+        <div class="header-buttons">
+            <div title="clear chat" id="clear-chat" class="header-btn" onclick="clearChat()">
+                {% include '/svgs/clear.svg' %}
+            </div>
+            <div title="download chat" id="download-chat" class="header-btn" onclick="downloadChat()">
+                {% include '/svgs/download.svg' %}
+            </div>
+            <div title="theme switch" id="theme-switcher" class="header-btn" onclick="changeTheme()">
+                {% include '/svgs/bulb.svg' %}
+            </div>
+        </div>
+    </header>
+
+    <!-- common absolute elements -->
+    <div>
+        <div id="models" class="hidden">
+            {% for model in models%}
+                <h6 id="{{ model }}" class="model" onmousedown="changeModel(this.id); Menu(this, 'models')">{{ model }}</h6>
+            {% endfor %}
+        </div>
+    
+        <svg class="mask">
+            <mask id="gemini-sparkle-mask-chat" class="gemini-sparkle-mask">
+                {% include '/svgs/gemini_sparkle.svg' %}
+            </mask>
+        </svg>
+        
+        <div class="gemini-sparkle"></div>
+    
+        <div id="server_message_common" class="server-message message" hidden>
+            <img class="gemini-sparkle" src="{{ url_for('static', filename='images/gemini_sparkle.svg') }}" alt="gemini">
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div id="client_message_common" class="client-message message" hidden>
+            <div class="text-container"></div>
+            <div class="file-container" hidden></div>
+            <div class="editable-hint"></div>
+        </div>
+    </div>
+    <!-- common absolute elements -->
+
+    <div id="chat_container" class="chat_container">
+
+        <div id="messages-container" class="messages-container">
+            
+            <div id="welcoming">
+                
+                <div class="title">
+                    <h1>Welcome to <span class="gemini-gradient-text">GeminiAPI</span>-based chatbot</h1>
+                    <h2>want to test me out?<img class="gemini-sparkle" src="{{ url_for('static', filename='images/gemini_sparkle.svg') }}" alt="gemini"></h2>
+                </div>
+
+                <div class="options">
+                    
+                    <input type="file" id="logs-input" hidden>
+                    <label for="logs-input" class="option logs">
+                        {% include '/svgs/logs.svg' %}
+                        <span>
+                            Continue saved Gemini conversation?
+                        </span>
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div id="messages" class="messages"></div>
+        </div>
+
+        <div class="prompt-container">
+            <div id="prompt" class="prompt">
+                
+                <input type="file" id="image-input" hidden>
+                <label for="image-input" class="image-input">
+                    {% include '/svgs/image_upload.svg' %}
+                </label>
+
+                <span id="text-input" class="text-input" type="text" role="textbox" contenteditable="plaintext-only"></span>
+
+                <div id="submit" class="submit disabled">
+                    {% include '/svgs/send_message.svg' %}
+                </div>
+            
+            </div>
+            <span>Gemini can make mistakes. Check important info.</span>
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat_socket.js') }}"></script>
+</html>

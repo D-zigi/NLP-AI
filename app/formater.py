@@ -15,6 +15,7 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name, get_all_lexers
 from pygments.formatters.html import HtmlFormatter
 
+# TODO - remove empty <p></p>
 
 def remove_empty_tags(html_text):
     """
@@ -28,7 +29,11 @@ def sanitize_text(text, full = False):
     Sanitize the text by replacing significant tags with their HTML equivalents
     Sanitize the text by cleaning the text for whitespaces and unnecessary tags(optional) 
     """
-    safe_text = text.replace("<", "&lt;").replace(">", "&gt;")
+    # Replace every <any text> with '<any text>'
+    # For auto formatting any defusing html as text
+    pattern = r'(<.*?>)'
+    replacement = r' `\1` '
+    safe_text = re.sub(pattern, replacement, text)
 
     if not full:
         return safe_text
@@ -44,7 +49,14 @@ def format_text(text):
     and return it as HTML
     """
     text = sanitize_text(text)
-    md = markdown.Markdown(safe_mode=True, extensions=['markdown.extensions.extra', 'markdown.extensions.md_in_html', 'markdown.extensions.tables'])
+    md = markdown.Markdown(
+        safe_mode=True,
+        extensions=[
+            'markdown.extensions.extra', 
+            'markdown.extensions.md_in_html', 
+            'markdown.extensions.tables'
+        ]
+    )
     formatted_text = md.convert(text)
 
     return formatted_text
@@ -62,7 +74,7 @@ def get_lexer(code):
     for lang in langs:
         if lang.lower() in lexer_names:
             return get_lexer_by_name(lang)
-    
+
     return get_lexer_by_name(default_lang)
 
 def format_code(code):
@@ -76,13 +88,15 @@ def format_code(code):
     title_index = code.lower().find(lang.lower())
     title = code[title_index:title_index + len(lang)]
     code = code.replace(title, '', 1)
-    
+
     formatter = HtmlFormatter(style='monokai', full=True, linenos=False)
     highlighted_code = highlight(code, lexer, formatter)
 
-    print(code)
     #add class for pre, for css better formatting
-    formatted_code = highlighted_code.replace('<pre>', f'<pre><div class="code-header"><span class="lang">{lang}</span></div>')
+    formatted_code = highlighted_code.replace(
+        '<pre>', 
+        f'<pre><div class="code-header"><span class="lang">{lang}</span></div>'
+    )
 
     return formatted_code
 
@@ -93,29 +107,29 @@ def find_all_indexes(text, substring):
     """
     return [m.start() for m in re.finditer(substring, text)]
 
-def html_format(response):
+def html_format(text):
     """
-    Convert raw python response to HTML format
+    Convert basic syntax python text to HTML format
     """
     formatted = []
-    code_indexes = find_all_indexes(response, '```')
+    code_indexes = find_all_indexes(text, '```')
 
     index = 0
     while code_indexes:
         start = code_indexes.pop(0) + 3
-        end = code_indexes.pop(0) + 1 if code_indexes else len(response)
+        end = code_indexes.pop(0) if code_indexes else len(text)
 
-        text_block = response[index:start]
-        code_block = response[start:end]
+        text_block = text[index:start]
+        code_block = text[start:end]
 
         formatted.append(format_text(text_block))
         formatted.append(format_code(code_block))
 
         index = end
 
-    formatted.append(format_text(response[index:]))
+    formatted.append(format_text(text[index:]))
 
-    formatted = ''.join(formatted).replace('`', '')
-    formatted = remove_empty_tags(formatted)
+    formatted = ''.join(formatted)
+    formatted = remove_empty_tags(formatted).replace('```', '')
 
     return formatted
