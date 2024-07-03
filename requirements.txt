@@ -2,13 +2,18 @@
 python-dotenv
 
 # web tools
-flask[async]
-flask
 markdown
 html-sanitizer
 
+#server-side
+flask
+flask[async]
 flask-socketio
+eventlet
 requests
+
+#Firebase
+firebase_admin
 
 # Data import
 pandas # Data manipulation library
