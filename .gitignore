@@ -12,6 +12,7 @@ firebase.json
 /app/model_kit/__pycache__
 
 /app/static/tmp/chat-rooms/*
+!/app/static/tmp/chat-rooms/null
 
 /app/static/css/header.css.map
 /app/static/css/styles.css.map
