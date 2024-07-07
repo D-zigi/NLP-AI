@@ -45,7 +45,7 @@ class ChatRoom:
         """
         chat_rooms.document(self.ip).delete()
 
-    def load_data(self):
+    def download_data(self):
         """
         load self object from firebase storage
         """

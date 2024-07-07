@@ -6,11 +6,13 @@ firebase.json
 /app/fix.txt
 /app/__pycache__
 /app/firebase/__pycache__
-/app/geminiAPI/__pycache__
+/app/gemini_api/__pycache__
+/app/gemini_api/fix.txt
 
 /app/model_kit/__pycache__
 
-/app/static/tmp
+/app/static/tmp/chat-rooms/*
+
 /app/static/css/header.css.map
 /app/static/css/styles.css.map
 /app/static/css/error.css.map

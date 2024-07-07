@@ -9,7 +9,6 @@ html-sanitizer
 flask
 flask[async]
 flask-socketio
-eventlet
 requests
 
 #Firebase
