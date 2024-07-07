@@ -15,7 +15,6 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name, get_all_lexers
 from pygments.formatters.html import HtmlFormatter
 
-# TODO - remove empty <p></p>
 
 def remove_empty_tags(html_text):
     """

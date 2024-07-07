@@ -55,11 +55,12 @@
                 <span></span>
                 <span></span>
             </div>
+            <div class="text-container"></div>
         </div>
 
         <div id="client_message_common" class="client-message message" hidden>
             <div class="text-container"></div>
-            <div class="file-container" hidden></div>
+            <div class="files-container" hidden></div>
             <div class="editable-hint"></div>
         </div>
     </div>
@@ -94,9 +95,11 @@
         </div>
 
         <div class="prompt-container">
+            <div id="input-files-container" class="files-container" hidden></div>
+            
             <div id="prompt" class="prompt">
                 
-                <input type="file" id="image-input" hidden>
+                <input type="file" id="image-input" hidden multiple>
                 <label for="image-input" class="image-input">
                     {% include '/svgs/image_upload.svg' %}
                 </label>

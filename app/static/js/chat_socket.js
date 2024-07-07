@@ -1,5 +1,4 @@
 /* chat sockeio connection and events */
-
 var socket = io('/chat', { forceBase64: true });
 
 /* HTML Elements used for socket */
@@ -9,6 +8,8 @@ var text_input = document.getElementById('text-input')
 var image_input = document.getElementById('image-input');
 var submit = document.getElementById('submit');
 
+var input_files_container = document.getElementById('input-files-container');
+
 var selected_model_name = document.getElementById('model-name');
 
 var messages_container = document.getElementById('messages-container')
@@ -17,13 +18,17 @@ var server_message_common = document.getElementById('server_message_common')
 var client_message_common = document.getElementById('client_message_common')
 var welcoming_message = document.getElementById('welcoming')
 
-
 const image_supported = [".png", ".jpg", ".jpeg", ".webp", ".heif", ".heic"]
 const logs_supported = [".pkl"]
 
 image_input.accept = image_supported.join(',');
 logs_input.accept = logs_supported.join(',');
 
+var filesData = {};
+var files_size = 0;
+const max_size = 1000000 * 10; // in bytes
+
+var html_data_path = null;
 
 var model = selected_model_name.innerText; //Gets default model name from HTML
 var promise = false; // response/other promises that require waiting before sending response 
@@ -39,12 +44,13 @@ function errorAlert(error_message, error_code) {
     customAlert(error_message, 'error');
 }
 
+
 /**
  * call emit with promise waiting
  * @param {String} event 
  * @param {Object} data 
  */
-function promisedEmit(event, data) {
+function promisedEmit(event, data = null) {
     promise = true
     submit_switch()
     try {
@@ -68,15 +74,6 @@ function promisedEmit(event, data) {
     }
 }
 
-/** 
- * starts chat with the specified model name
- * @param {String} model_name
-*/
-function startChat(model_name) {
-    model = model_name
-    promisedEmit('start_chat', { model_name: model });
-}
-
 /**
  * selected model is being processed and updated in the chat
  * @param {String} model - model name 
@@ -88,49 +85,198 @@ function changeModel(model_name) {
 }
 
 /**
- * Loads uploaded .json binary chat data (pickled) for loading the chat
- * @param {ArrayBuffer} chat_data - The binary data of the pickled chat
+ * sends html_data for update chat data on server side
+ * saves the data in external db and storage
+ * @param {String} html_data 
  */
-function loadChat(chat_data) {
-    logs_input.value = ''; //Clear logs input
-    promisedEmit('load_chat', chat_data);
+function updateChat(html_data) {
+    const chunkSize = max_size;
+    const totalChunks = Math.ceil(html_data.length / chunkSize);
+
+    for (let i = 0; i < totalChunks; i++) {
+        const start = i * chunkSize;
+        const end = (i + 1) * chunkSize;
+        const chunk = html_data.substring(start, end);
+        console.log(chunk);
+        socket.emit('update_chat', chunk);
+    }
+}
+
+/**
+ * clears chat on the server and client
+ */
+function clearChat() {
+    promisedEmit('clear_chat')
+}
+
+
+/**
+ * Loads chat html data
+ * @param {String} html_data_path - html data path
+ * @param {Number} attempts
+ */
+function loadChat(html_data_path, attempts = 0) {
+    const timeout = 1000; //ms
+    const max_attempts = 5;
+
+    fetch(html_data_path)
+    .then(response => response.text())
+    .then(text => {
+        if (text.includes("<title>404</title>")) {
+            if (attempts < max_attempts) {
+                setTimeout(loadChat, timeout / max_attempts, html_data_path, attempts + 1);
+            }
+        }
+        else {
+            messages.innerHTML = text;
+            scrollToBottom(messages_container);
+        }
+    })
+    .catch(
+        error => console.error('Error fetching the file:', error)
+    );
 }
 
 /**
  * downloads current chat on user's local storage
+ * temporarly unused function on the app due to lack of additional server:
+ * for each user folder: .pkl .txt + other.pkl
  */
 function downloadChat() {
-    const html_data = messages.innerHTML;
-    socket.emit('download_chat', html_data, function(chat_data, chat_name) {
+    socket.emit('download_chat', function(data_path, chat_name) {
+        // Fetch the file from the server using the provided URL
+        fetch(data_path)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Create a temporary URL for the Blob
+                const url = URL.createObjectURL(blob);
 
-        console.log(chat_data);
+                // Create a link element
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${chat_name.trim()}.pkl`; // File name
+                document.body.appendChild(a);
 
-        // Create a Blob from the PKL data
-        const blob = new Blob([chat_data], { type: 'application/octet-stream' });
+                // Trigger the download
+                a.click();
 
-        // Create a temporary URL for the Blob
-        const url = URL.createObjectURL(blob);
-
-        // Create a link element
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${chat_name.trim()}.pkl`; // File name
-        document.body.appendChild(a);
-
-        // Trigger the download
-        a.click();
-
-        // Clean up: remove the temporary URL and link element
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+                // Clean up: remove the temporary URL and link element
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     });
 }
 
 
-function clearChat() {
-    messages.innerHTML = '';
-    promisedEmit('clear_chat', null);
+function uploadChat(data_url) {
+    socket.emit('load_chat', data_url);
 }
+
+
+
+/**
+ * sends base64 data to the server in seperate chunks.
+ * @param {String} data - file base64 data
+ * @param {String} filename - file name
+ * @param {String} filetype - file type
+ */
+function sendBase64Data(data, filename, filetype) {
+    const chunkSize = 1024 * 1024 / 2;
+    const totalChunks = Math.ceil(data.length / chunkSize);
+
+    socket.emit('base64_load_start', {filename: filename, filetype: filetype});
+    for (let i = 0; i < totalChunks; i++) {
+        const start = i * chunkSize;
+        const end = (i + 1) * chunkSize;
+        const chunk = data.substring(start, end);
+        socket.emit('base64_load_chunk', {filename: filename, chunk: chunk});
+    }
+    
+    socket.emit('base64_load_end', {filename: filename});
+}
+
+function fileContainer(image_src, image_name) {
+    var file_container = document.createElement('div')
+    var img = document.createElement('div');
+    file_container.id = image_name;
+    file_container.classList = 'file-container';
+    img.classList.add('img');
+    img.style.backgroundImage = `url(${image_src})`;
+    file_container.appendChild(img);
+    return file_container
+}
+
+/**
+ * passes all the checks and returns apennds all needed image data to `filesData`
+ * if not passes returns errors accordingly
+ * @param {Number} max_size - in bytes 
+ * @param {File} image 
+ */
+function uploadImage(image) {
+    const max_image_size = max_size
+    const reader = new FileReader();
+    let imageData = {};
+    
+    reader.onload = function(event) {
+
+        if (!image_supported.includes('.' + image.name.split('.')[1])) { // If file is an unsupported image ext
+            const error = "Unsupported Media Type";
+            errorAlert(error, 415);
+        }
+
+        else if(image.size > max_image_size) { // If file is too large
+            const error = "File too large";
+            errorAlert(error, 413);
+        }
+
+        else if(files_size + image.size > max_size) { // If file limit is exceeded
+            const error = "File limit exceeded";
+            errorAlert(error, 413);
+        }
+
+        else {  // If OK
+            imageData.type = image.type;
+            imageData.size = image.size;
+            imageData.src = event.target.result;
+
+            filesData[image.name] = imageData;
+
+            const file_container = fileContainer(imageData.src, image.name)
+            var remove_button = document.createElement('span');
+            remove_button.classList.add('remove-button');
+            remove_button.innerText = 'X';
+            remove_button.onclick = function(event) { removeFile(image.name);};
+
+            input_files_container.hidden = false;
+
+            file_container.prepend(remove_button);
+            input_files_container.appendChild(file_container);
+
+            files_size += image.size;
+
+            sendBase64Data(event.target.result.split(',')[1], image.name, image.type);
+        }
+    }
+    reader.readAsDataURL(image);
+}
+
+function removeFile(filename) {
+    document.getElementById(filename).remove();
+    files_size -= filesData[filename].size;
+    delete filesData[filename];
+    if (Object.keys(filesData).length == 0) {
+        input_files_container.hidden = true;
+    }
+    socket.emit('remove_file', filename);
+};
 
 
 /** 
@@ -138,13 +284,11 @@ function clearChat() {
 */
 function message_submit() {
     var text = text_input.innerText;
-    var image = imageData.base64String;
 
     text_input.innerText = ''; //Clear text input
-    image_input.value = ''; //Clear image input
 
     input = false
-    promisedEmit('message', { text: text, image: image });
+    promisedEmit('message', { text: text });
 }
 
 /** 
@@ -167,43 +311,24 @@ function submit_switch() {
 
 /* listens for chat logs input */
 logs_input.addEventListener('change', function() {
-    var reader = new FileReader()
+    errorAlert("Service Unavailable, Maintenance Mode", 503);
     var logs = this.files[0];
-    reader.onload = function(event) {
-        if (logs_supported.includes('.' + logs.name.split('.')[1])) {
-            const logsContent = event.target.result;
-            loadChat(logsContent);
-        }
-        else {
-            const error = "Unsupported Media Type";
-            errorAlert(error, 415);
-        }
-    }
-    reader.readAsArrayBuffer(logs);
+    //TODO POST
 });
 
 /* listens for image input */
-var imageData = {};
 image_input.addEventListener('change', function() {
-    var reader = new FileReader();
-    var image = this.files[0];
+    var images = this.files;
     
-    reader.onload = function(event) {
-        if (image_supported.includes('.' + image.name.split('.')[1])) {
-            imageData.base64String = event.target.result.split(',')[1];
-            
-            imageData.type = image.type;
-            imageData.size = image.size;
-            imageData.name = image.name;
-            imageData.src = event.target.result;
-        }
-        else {
-            const error = "Unsupported Media Type";
-            errorAlert(error, 415);
-        }
+    for (const image of images) {
+        uploadImage(image);
     }
-
-    reader.readAsDataURL(image);
+});
+text_input.addEventListener('paste', function(event) {
+    const files = event.clipboardData.files;
+    for (const file of files) {
+        uploadImage(file);
+    }
 });
 
 /* Client input and submit listeners */
@@ -220,10 +345,10 @@ text_input.addEventListener('keydown', function(event) {
 });
 
 /* Loads raw html chat */
-socket.on('load-chat', (html_data) => {
-    messages.innerHTML = html_data;
-    scrollToBottom(messages_container);
+socket.on('load-chat', (html_data_path) => {
+    loadChat(html_data_path)
 });
+
 
 /* For CLIENT message handling */
 socket.on('client-message', (data) => {
@@ -234,69 +359,76 @@ socket.on('client-message', (data) => {
      * @param {Number} count 
      * @returns {Node}
      */
-    function client_message_construct(message, count) {
+    function client_message_construct(message, index) {
         var client_message = client_message_common.cloneNode(true);
         client_message.hidden = false;
-        client_message.id = `mc${count}`; // mc{count} - message_client_{count}
+        client_message.id = 'cm' + index; // cm{index} - client_message_{index}
         
-        var text_container = client_message.children[0];
+        var text_container = client_message.querySelector('.text-container');
         text_container.innerHTML = message;
         
-        if (Object.keys(imageData).length != 0) {
-            var file_container = client_message.children[1];
-            file_container.hidden = false;
-            file_container.innerText = imageData.name;
+        if (Object.keys(filesData).length != 0) {
+            for (const filename in filesData) {
+                var files_container = client_message.querySelector('.files-container');
+                files_container.hidden = false;
 
-            var image = document.createElement('img');
-            image.src = imageData.src;
-            file_container.appendChild(image);
-            
-            imageData = {}; //clear input image data
+                const file_container = fileContainer(filesData[filename].src, filename)
+
+                files_container.appendChild(file_container);
+            }
+            filesData = {};
+            input_files_container.hidden = true;
+            input_files_container.innerHTML = '';
         }
 
         return client_message;
     }
-        
-    const client_message = client_message_construct(data.message, data.count);
+    
+    const message = data.message;
+    const index = data.index;
+
+    const client_message = client_message_construct(message, index);
     messages.appendChild(client_message);
+    updateChat(client_message.outerHTML)
 });
 /* SERVER message typing(thinking) animation */
-socket.on('server-typing', () => { //TODO glass loaded block
+socket.on('server-typing', () => {
     var server_responding = server_message_common.cloneNode(true);
+    server_responding.id = '';
     server_responding.hidden = false;
 
     messages.appendChild(server_responding);
     scrollToBottom(messages_container);
 });
 /* For SERVER message handling */
-socket.on('server-message', (message) => {
+socket.on('server-message', (data) => {
+    const message = data.response;
+    const index = data.index;
+
     let server_messages = document.getElementsByClassName('server-message');
     let server_message = server_messages[server_messages.length - 1];
 
-    var gemini_response = server_message.getElementsByClassName("typing")[0];
+    server_message.id = 'sm' + index; // sm{index} - server_message_{index}'
 
-    gemini_response.classList = 'gemini-response';
-    gemini_response.innerHTML = message;
+    var typing = server_message.querySelector(".typing");
+    server_message.removeChild(typing);
+
+    var text_container = server_message.querySelector('.text-container');
+    text_container.innerHTML = message;
     
-    messages.appendChild(server_message);
+    updateChat(server_message.outerHTML)
 });
 
-/* sends html-data for caching purposes */
-socket.on('html-cache', () => {
-    const html_data = messages.innerHTML;
-    promisedEmit('html_cache', html_data);
-});
 
 
 socket.on('connect', () => {
-    startChat(model); //Starts chat with default model
+    promisedEmit('start_chat');
 });
 
+socket.on('disconnect', () => {
+})
 
 socket.on('error', (error) => {
-    var server_messages = document.getElementsByClassName('server-message')
-    var server_typing = server_messages[server_messages.length - 1];
-
-    messages.removeChild(server_typing)
+    messages.lastChild.remove()
     errorAlert(error["message"], error["code"]);
 });

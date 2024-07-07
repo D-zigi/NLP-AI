@@ -2,10 +2,10 @@
 Blueprint
 for routes and views for the flask application.
 """
-from flask import Blueprint, render_template, redirect, url_for, request, abort
 import requests
+from flask import Blueprint, make_response, render_template, redirect, url_for, request, abort
 from .errors import errors
-from .geminiAPI.chat import list_model_names, DEFAULT_MODEL
+from .gemini_api.chat import list_model_names, DEFAULT_MODEL
 
 main = Blueprint("main", __name__)
 
@@ -51,8 +51,14 @@ def chat():
     models = set(list_model_names())
     models.add(DEFAULT_MODEL)
 
-    return render_template(
-        'chatbot.html', 
-        models=models,
-        default_model = DEFAULT_MODEL
+    response = make_response(
+        render_template(
+            'chatbot.html', 
+            models=models,
+            default_model = DEFAULT_MODEL
+        )
     )
+    response.headers['Cache-Control'] = 'public, max-age=3600'
+    response.headers['Vary'] = 'User-Agent'
+
+    return response

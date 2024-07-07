@@ -9,6 +9,7 @@ $scrollbar_width: calc($small_length / 2);
 $prompt_height: calc($small_length + 2 * $small_margin);
 $prompt_full_height: calc($prompt_height + $small_margin * 4 + 5px);
 $header_height: $prompt_full_height;
+$border_radius: $small_margin;
 
 $p: 16px;
 $h1: 2.5rem;
@@ -74,6 +75,8 @@ header {
     justify-content: space-between;
     align-items: center;
     position: absolute;
+    top: 0;
+    left: 0;
 
     #selected-model {
         cursor: pointer;
@@ -178,9 +181,50 @@ div.gemini-sparkle {
     padding-top: $header_height;
 }
 
+.files-container {
+    @include vendor-prefix(backdrop-filter, blur(8px));
+    display: flex;
+    gap: $small_margin;
+    .file-container {
+        background-color: var(--prompt-color);
+        padding: $small_margin;
+        border-radius: calc($border_radius + $small_margin);
+        border: var(--border-color) 1px solid;
+
+        .img {
+            border-radius: $border_radius;
+            background-position: center;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+.files-container[hidden] {
+    @include vendor-prefix(backdrop-filter, none);
+}
+.remove-button {
+    $size: 1.5em;
+    float: right;
+    height: $size;
+    width: $size;
+    line-height: $size;
+    text-align: center;
+    border-radius: 50%;
+    background-color: var(--prompt-color);
+    margin: $small_margin;
+    @include vendor-prefix(user-select, none);
+    cursor: pointer;
+    transition: 0.1s;
+}
+.remove-button:active {
+    opacity: 0.75;
+}
+
+
 .messages-container {
     width: 100%;
-    height: calc(100% - $prompt_full_height - 2 * $small_margin);
+    height: calc(100% - $prompt_full_height);
     padding: 0 calc((100vw - $chat_width) / 2);
     font-size: $p;
     overflow-y: scroll;
@@ -261,35 +305,34 @@ div.gemini-sparkle {
             clear: both;
             
             $elements_padding: calc($small_margin * 2);
-            $b_radius: $small_margin;
             pre{
                 background-color: black;
                 padding: $elements_padding;
                 padding-top: 0;
                 margin-top: 0;
-                border-radius: $b_radius;
+                border-radius: $border_radius;
 
                 .code-header {
                     background-color: var(--prompt-color);
                     width: calc(100% + 2 * $elements_padding);
                     margin-left: -$elements_padding;
                     padding: calc(0.5 * $elements_padding) $elements_padding;
-                    border-radius: $b_radius $b_radius 0 0;
+                    border-radius: $border_radius $border_radius 0 0;
                     margin-bottom: $elements_padding;
                     font-size: $p;
                 }
             }
 
-            .file-container {
-                border-radius: $b_radius;
-                background-color: var(--prompt-color);
-                padding: $small_margin;
-                margin: $small_margin 0;
-                border: var(--border-color) 1px solid;
-
-                img {
-                    width: 100%;
-                    border-radius: $b_radius;
+            .files-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                .file-container {
+                    max-width: 100%;
+                    aspect-ratio: 1 / 1;
+                    .img {
+                        width: 100vw;
+                        max-width: 100%;
+                    }
                 }
             }
         }
@@ -331,7 +374,7 @@ div.gemini-sparkle {
         
             img.gemini-sparkle {
                 height: $small_length;
-                margin-top: calc(($small_length / 2 * 3 + $small_margin) / 2); //half of <p>
+                margin: calc(($small_length / 2 * 3 + $small_margin) / 2) $small_margin 0 0; //half of <p>
                 transform: translateY(calc(-1 * $small_length / 2));
             }
         
@@ -362,6 +405,19 @@ div.gemini-sparkle {
     justify-content: space-around;
     align-items: center;
     
+    .files-container {
+        padding-bottom: $small_margin;
+        border-radius: calc($border_radius * 2) calc($border_radius * 2) 0 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: calc($chat_width - $scrollbar_width);
+        .file-container {
+            $cards: 4;
+            width: calc((100% - (3 * $small_margin)) / $cards);
+            aspect-ratio: 1 / 1;
+        }
+    }
+
     .prompt {
         @include glass;
         width: calc($chat_width - $scrollbar_width);
@@ -443,6 +499,7 @@ div.gemini-sparkle {
             width: $svg_length;
             fill: var(--prompt-color) !important; 
         }
+
     }
 
     > span {
@@ -536,8 +593,14 @@ div.gemini-sparkle {
         }
 
     }
+
     .prompt-container {
         width: 100%;
+
+        .files-container {
+            width: $chat_width;
+        }
+
         .prompt {
             width: $chat_width;
         }

@@ -70,6 +70,8 @@ header {
   justify-content: space-between;
   align-items: center;
   position: absolute;
+  top: 0;
+  left: 0;
 }
 header #selected-model {
   cursor: pointer;
@@ -188,9 +190,59 @@ div.gemini-sparkle {
   padding-top: 85px;
 }
 
+.files-container {
+  -webkit-backdrop-filter: blur(8px);
+  -moz-backdrop-filter: blur(8px);
+  -o-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  display: flex;
+  gap: 8px;
+}
+.files-container .file-container {
+  background-color: var(--prompt-color);
+  padding: 8px;
+  border-radius: 16px;
+  border: var(--border-color) 1px solid;
+}
+.files-container .file-container .img {
+  border-radius: 8px;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.files-container[hidden] {
+  -webkit-backdrop-filter: none;
+  -moz-backdrop-filter: none;
+  -o-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.remove-button {
+  float: right;
+  height: 1.5em;
+  width: 1.5em;
+  line-height: 1.5em;
+  text-align: center;
+  border-radius: 50%;
+  background-color: var(--prompt-color);
+  margin: 8px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.remove-button:active {
+  opacity: 0.75;
+}
+
 .messages-container {
   width: 100%;
-  height: calc(100% - 85px - 16px);
+  height: calc(100% - 85px);
   padding: 0 calc((100vw - 800px) / 2);
   font-size: 16px;
   overflow-y: scroll;
@@ -327,16 +379,17 @@ div.gemini-sparkle {
   margin-bottom: 16px;
   font-size: 16px;
 }
-.messages-container .messages .message .file-container {
-  border-radius: 8px;
-  background-color: var(--prompt-color);
-  padding: 8px;
-  margin: 8px 0;
-  border: var(--border-color) 1px solid;
+.messages-container .messages .message .files-container {
+  flex-direction: row;
+  flex-wrap: wrap;
 }
-.messages-container .messages .message .file-container img {
-  width: 100%;
-  border-radius: 8px;
+.messages-container .messages .message .files-container .file-container {
+  max-width: 100%;
+  aspect-ratio: 1/1;
+}
+.messages-container .messages .message .files-container .file-container .img {
+  width: 100vw;
+  max-width: 100%;
 }
 .messages-container .messages .client-message {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
@@ -381,7 +434,7 @@ div.gemini-sparkle {
 }
 .messages-container .messages .server-message img.gemini-sparkle {
   height: 32px;
-  margin-top: 28px;
+  margin: 28px 8px 0 0;
   transform: translateY(-16px);
 }
 .messages-container .messages .server-message .typing {
@@ -405,6 +458,17 @@ div.gemini-sparkle {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+}
+.prompt-container .files-container {
+  padding-bottom: 8px;
+  border-radius: 16px 16px 0 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 784px;
+}
+.prompt-container .files-container .file-container {
+  width: calc((100% - 24px) / 4);
+  aspect-ratio: 1/1;
 }
 .prompt-container .prompt {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
@@ -572,6 +636,9 @@ div.gemini-sparkle {
   }
   .prompt-container {
     width: 100%;
+  }
+  .prompt-container .files-container {
+    width: 90vw;
   }
   .prompt-container .prompt {
     width: 90vw;
