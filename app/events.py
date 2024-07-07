@@ -8,8 +8,8 @@ weren't implemented because of lack of usage
 """
 import os
 import pickle
-import requests
 import concurrent.futures
+import requests
 from flask import request
 from bs4 import BeautifulSoup
 from flask_socketio import join_room, leave_room, emit #, send
@@ -80,7 +80,7 @@ def read_blob(blob_url):
     """
     reads blob data from url
     """
-    response = requests.get(blob_url)
+    response = requests.get(blob_url, timeout=10)
     return response.content
 
 
@@ -221,7 +221,7 @@ def load_chat(data_url=None, client_ip=None):
 
     chat = create_chat(model_name, history)
     rooms_data[client_ip]["chat"] = chat
-    # socketio.emit(change_model)
+    socketio.emit('change-model', model_name, namespace='/chat', room=client_ip)
     print("finished loading")
 
     save_html_data(client_ip, html_data)

@@ -177,7 +177,7 @@ function downloadChat() {
 
 
 function uploadChat(data_url) {
-    socket.emit('load_chat', data_url);
+    promisedEmit('load_chat', data_url);
 }
 
 
@@ -347,6 +347,10 @@ text_input.addEventListener('keydown', function(event) {
 /* Loads raw html chat */
 socket.on('load-chat', (html_data_path) => {
     loadChat(html_data_path)
+});
+
+socket.on('change-model', (model_name) => {
+    changeModel(model_name);
 });
 
 
