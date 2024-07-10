@@ -1,0 +1,86 @@
+@font-face {
+  font-family: "Aptos";
+  src: url(../fonts/Aptos-Light.ttf);
+}
+@font-face {
+  font-family: "Google Sans";
+  src: url(../fonts/GoogleSans-Regular.ttf);
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+:root {
+  --primary-color: #060606;
+  --text-color: rgb(255, 255, 255);
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: "Google Sans" !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Google Sans" !important;
+}
+
+body {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+}
+
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.title {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  text-align: center;
+}
+.title * {
+  text-shadow: #1BA1E3 0 0 200px;
+}
+.title h1 {
+  font-size: 96px;
+  -webkit-width: fit-content;
+  -moz-width: -moz-fit-content;
+  -ms-width: fit-content;
+  -o-width: fit-content;
+  width: fit-content;
+}
+.title h1 span {
+  background: linear-gradient(90deg, #9168C0, #5684D1, #1BA1E3, #9168C0 75%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.credits {
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+.credits #Firebase {
+  height: 30px;
+  fill: white;
+}
+.credits #Gemini {
+  height: 30px;
+  transform: translateY(-5px);
+}/*# sourceMappingURL=credits.css.map */

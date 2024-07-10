@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Gemini API</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/credits.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/gemini_sparkle.svg') }}">
+</head>
+<body>
+    <div class="title">
+        <h1>Built with <span>Gemini</span> API</h1>
+        <img alt="Gemini Sparkle" src="{{ url_for('static', filename='images/gemini_sparkle.svg') }}" width="100" height="100">
+    </div>
+    <div class="credits">
+        <span>Powered by</span>
+        <img alt="Firebase" id="Firebase" src="{{ url_for('static', filename='images/Firebase.svg') }}">
+        <img alt="Gemini" id="Gemini" src="{{ url_for('static', filename='images/Gemini.svg') }}">
+    </div> 
+</body>
+</html>

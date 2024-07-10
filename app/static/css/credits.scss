@@ -1,0 +1,73 @@
+@import 'fonts';
+@import 'mixins';
+
+:root {
+  --primary-color: #060606;
+  --text-color: rgb(255, 255, 255);
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Google Sans' !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Google Sans' !important;
+}
+
+body {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+}
+
+img {
+  @include vendor-prefix(user-select, none);
+  pointer-events: none;
+}
+
+
+.title {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  text-align: center;
+  * {
+    text-shadow:#1BA1E3 0 0 200px;
+  }
+
+  h1 {
+    font-size: 96px;
+    @include vendor-prefix(width, fit-content);
+    span {
+        @include gemini_gradient("text");
+    }
+  }
+  
+}
+
+.credits {
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+
+  #Firebase {
+    height: 30px;
+    fill: white;
+  }
+
+  #Gemini {
+    height: 30px;
+    transform: translateY(-5px);
+  }
+}
