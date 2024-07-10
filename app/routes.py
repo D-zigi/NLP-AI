@@ -41,6 +41,30 @@ def visualization():
     else:
         abort(403)
 
+@main.route('/credits')
+def credits_page():
+    """
+    opens 'credits' page
+    (provides the app with the credits page)
+    """
+    return render_template('credits.html')
+
+@main.route('/webuilder', methods=['GET', 'POST'])
+def webuilder():
+    """
+    opens 'webuilder' page
+    (provides the app with the webuilder page)
+    """
+    if request.method == 'GET':
+        return render_template('webuilder.html')
+
+    elif request.method == 'POST':
+        return render_template('webuilder.html')
+        # url = request.form['url']
+        # response = requests.get(url)
+        # soup = BeautifulSoup(response.content, 'html.parser')
+        # title = soup.title.string
+        # return render_template('webuilder.html', title=title, url=url)
 
 @main.route('/chatbot', methods=['GET', 'POST'])
 def chat():
