@@ -103,8 +103,9 @@ header #selected-model .model-name {
 }
 header #selected-model::after {
   content: "˅";
-  font-size: 16px;
-  font-weight: 100;
+  font-size: 1rem;
+  font-weight: 1000;
+  -webkit-text-stroke: 0.5px;
   margin-left: 8px;
 }
 header #selected-model:hover {
@@ -240,44 +241,37 @@ div.gemini-sparkle {
   opacity: 0.75;
 }
 
-.messages-container {
-  width: 100%;
-  height: calc(100% - 85px);
-  padding: 0 calc((100vw - 800px) / 2);
-  font-size: 16px;
-  overflow-y: scroll;
-}
-.messages-container * {
-  text-wrap: wrap;
-  word-wrap: break-word;
-}
-.messages-container #welcoming {
-  margin: 8px;
+#welcoming {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-.messages-container #welcoming .title * {
+#welcoming .title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#welcoming .title * {
   -webkit-width: fit-content;
   -moz-width: -moz-fit-content;
   -ms-width: fit-content;
   -o-width: fit-content;
   width: fit-content;
 }
-.messages-container #welcoming .title img.gemini-sparkle {
+#welcoming .title img.gemini-sparkle {
   margin-left: 8px;
   align-self: center;
   height: -moz-max-content;
   height: max-content;
 }
-.messages-container #welcoming .title span {
+#welcoming .title span {
   background: linear-gradient(90deg, #9168C0, #5684D1, #1BA1E3, #9168C0 75%);
-  background-size: 200% 100%;
-  animation: gradient-animation-infinite 4s linear infinite;
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: gradient-animation-infinite 4s linear infinite;
 }
 @keyframes gradient-animation {
   0% {
@@ -295,14 +289,14 @@ div.gemini-sparkle {
     background-position: -100% 0%;
   }
 }
-.messages-container #welcoming .options {
+#welcoming .options {
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
 }
-.messages-container #welcoming .options .option {
+#welcoming .options .option {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
   -webkit-backdrop-filter: blur(10px);
   -moz-backdrop-filter: blur(10px);
@@ -321,24 +315,24 @@ div.gemini-sparkle {
   padding: 8px;
   aspect-ratio: 1/1;
 }
-.messages-container #welcoming .options .option span {
+#welcoming .options .option span {
   text-align: center;
 }
-.messages-container #welcoming .options .logs svg {
+#welcoming .options .logs svg {
   fill: var(--text-color);
   height: 50%;
   transition: 0.05s;
 }
-.messages-container #welcoming .options .option:hover {
+#welcoming .options .option:hover {
   background-color: var(--prompt-color);
 }
-.messages-container #welcoming .options .option:hover span {
+#welcoming .options .option:hover span {
   background: linear-gradient(90deg, #9168C0, #5684D1, #1BA1E3, #9168C0 75%);
-  background-size: 200% 100%;
-  animation: gradient-animation-infinite 4s linear infinite;
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: gradient-animation-infinite 4s linear infinite;
   font-weight: 800;
 }
 @keyframes gradient-animation {
@@ -357,8 +351,20 @@ div.gemini-sparkle {
     background-position: -100% 0%;
   }
 }
-.messages-container #welcoming .options .option:hover svg {
+#welcoming .options .option:hover svg {
   height: 47.5%;
+}
+
+.messages-container {
+  width: 100%;
+  height: calc(100% - 85px);
+  padding: 0 calc((100vw - 800px) / 2);
+  font-size: 1rem;
+  overflow-y: scroll;
+}
+.messages-container * {
+  text-wrap: wrap;
+  word-wrap: break-word;
 }
 .messages-container .messages .message {
   clear: both;
@@ -377,7 +383,7 @@ div.gemini-sparkle {
   padding: 8px 16px;
   border-radius: 8px 8px 0 0;
   margin-bottom: 16px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 .messages-container .messages .message .files-container {
   flex-direction: row;
@@ -434,8 +440,7 @@ div.gemini-sparkle {
 }
 .messages-container .messages .server-message img.gemini-sparkle {
   height: 32px;
-  margin: 28px 8px 0 0;
-  transform: translateY(-16px);
+  margin: 8px;
 }
 .messages-container .messages .server-message .typing {
   margin-top: 28px;
@@ -485,9 +490,7 @@ div.gemini-sparkle {
   min-height: 48px;
   height: auto;
   display: flex;
-  justify-content: space-between;
   flex-direction: row;
-  align-items: flex-end;
   padding: 8px;
 }
 .prompt-container .prompt .text-input {
@@ -495,8 +498,8 @@ div.gemini-sparkle {
   width: 100%;
   overflow: hidden;
   padding: 0 16px;
-  font-size: 16px;
-  min-height: 24px;
+  font-size: 1rem;
+  min-height: 1rem;
   max-height: 50dvh;
   border: none;
   outline: none;

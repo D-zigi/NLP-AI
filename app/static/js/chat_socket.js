@@ -40,6 +40,7 @@ var input = false; // input acceptance (whitespace only - false)
  * @param {Number} error_code
  */
 function errorAlert(error_message, error_code) {
+    console.log("Error")
     console.error(`Error ${error_code}:${error_message}`);
     customAlert(error_message, 'error');
 }

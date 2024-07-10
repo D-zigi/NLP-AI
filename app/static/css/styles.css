@@ -18,6 +18,13 @@
   font-family: "Aptos";
   src: url(../fonts/Aptos-Light.ttf);
 }
+@font-face {
+  font-family: "Google Sans";
+  src: url(../fonts/GoogleSans-Regular.ttf);
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 html, body {
   height: 100%;
   width: 100%;
@@ -27,13 +34,16 @@ html, body {
 }
 
 body {
-  font-family: "Aptos" !important;
   background-color: var(--primary-color) !important;
   color: var(--text-color) !important;
 }
 
+* {
+  font-family: "Google Sans" !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 800 !important;
+  font-weight: 400 !important;
 }
 
 img {

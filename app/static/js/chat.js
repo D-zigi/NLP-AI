@@ -14,13 +14,6 @@ var old_platform = null
 window.onload = function() {
     screenWidth = window.innerWidth;
     old_platform = screenWidth <= 800 ? "mobile" : "desktop";
-
-    //select model menu caller
-    document.getElementById("selected-model").addEventListener('mousedown', function(event) {
-        if (this.contains(event.target)) {
-            Menu(this, "models");
-        }
-    });
 }
 
 //window elements resize optimization
@@ -28,9 +21,6 @@ window.onload = function() {
 window.onresize = function() {
     screenWidth = window.innerWidth;
     var platform = screenWidth <= 800 ? "mobile" : "desktop" 
-
-    if (old_platform != platform) {
-        old_platform = platform;
-        document.getElementById("models").classList.add("hidden");
-    }
+    
+    document.getElementById("models").classList.add("hidden");
 }

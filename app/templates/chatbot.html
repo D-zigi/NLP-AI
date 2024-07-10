@@ -15,7 +15,7 @@
 </head>
 <body>
     <header>
-        <div id="selected-model">
+        <div id="selected-model" onmousedown="Menu(this, 'models')">
             {% include '/svgs/gemini_sparkle.svg' %}
             <h5 id="model-name" class="model-name">{{ default_model }}</h5>
         </div>

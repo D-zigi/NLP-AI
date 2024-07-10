@@ -25,20 +25,23 @@
 }
 
 
-//Gemini gradient
-$g-color1: #9168C0;
-$g-color2: #5684D1;
-$g-color3: #1BA1E3;
 
-@mixin gemini_gradient($surface) {
-    #{$surface}: linear-gradient(
+//Gemini gradient
+@mixin gemini_gradient($surface: 'background') {
+    $g-color1: #9168C0;
+    $g-color2: #5684D1;
+    $g-color3: #1BA1E3;
+    background: linear-gradient(
         90deg,
         $g-color1, $g-color2, $g-color3, $g-color1 75%
     );
+    @if $surface == text {
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
-@mixin gemini_gradient_animated($duration, $type: linear, $count: 1) {
-    @include gemini_gradient("background");
+@mixin gradient_animation($duration, $type: linear, $count: 1) {
     background-size: 200% 100%;
     
     @if $count == infinite {
@@ -66,13 +69,6 @@ $g-color3: #1BA1E3;
         }
     }
 }
-
-@mixin gemini_gradient_text_animated($duration, $type: linear, $count: 1) {
-    @include gemini_gradient_animated($duration, $type, $count);
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
 
 @mixin glass($border-radius: 20px, $color:rgb(255, 255, 255)) {
     background: linear-gradient(135deg, rgba($color, 0.1), rgba($color, 0));

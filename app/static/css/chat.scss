@@ -11,7 +11,7 @@ $prompt_full_height: calc($prompt_height + $small_margin * 4 + 5px);
 $header_height: $prompt_full_height;
 $border_radius: $small_margin;
 
-$p: 16px;
+$p: 1rem;
 $h1: 2.5rem;
 h1 { font-size: $h1; }
 h2 { font-size: calc($h1 / 1.333); }
@@ -104,8 +104,9 @@ header {
         &::after {
             content: '˅';
             font-size: $p;
-            font-weight: 100;
-            margin-left: $small_margin;
+            font-weight: 1000;
+            -webkit-text-stroke: 0.5px;
+            margin-left: 8px;
         }
 
         &:hover {
@@ -160,7 +161,8 @@ header {
 
 
 div.gemini-sparkle {
-    @include gemini_gradient_animated(4s, $count: infinite);
+    @include gemini_gradient();
+    @include gradient_animation(4s, $count: infinite);
     -webkit-mask: url('#gemini-sparkle-mask-chat');
     mask: url('#gemini-sparkle-mask-chat');
     width: 100px;
@@ -222,6 +224,75 @@ div.gemini-sparkle {
 }
 
 
+#welcoming {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        * {
+            @include vendor-prefix(width, fit-content);
+        }
+
+        img.gemini-sparkle {
+            margin-left: $small_margin;
+            align-self: center;
+            height: max-content;
+        }
+
+        span {
+            @include gemini_gradient("text");
+            @include gradient_animation(4s, $count: infinite);
+        }
+    }
+
+    .options {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    
+        .option {
+            @include glass;
+            cursor: pointer !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            transition: 0.1s;
+            span {
+                text-align: center;
+            }
+            width: 30%;
+            padding: $small_margin;
+            aspect-ratio: 1 / 1;
+        }
+
+        .logs svg {
+            fill: var(--text-color);
+            height: 50%;
+            transition: 0.05s;
+        }
+    
+        .option:hover {
+            background-color: var(--prompt-color);
+            span {
+                @include gemini_gradient("text");
+                @include gradient_animation(4s, $count: infinite);
+                font-weight: 800;
+            }
+            svg {
+                height: 47.5%;
+            }
+        }
+    }
+}
+
 .messages-container {
     width: 100%;
     height: calc(100% - $prompt_full_height);
@@ -234,70 +305,6 @@ div.gemini-sparkle {
         word-wrap: break-word;
     }
 
-    #welcoming {
-        margin: $small_margin;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    
-        .title {
-            * {
-                @include vendor-prefix(width, fit-content);
-            }
-    
-            img.gemini-sparkle {
-                margin-left: $small_margin;
-                align-self: center;
-                height: max-content;
-            }
-    
-            span {
-                @include gemini_gradient_text_animated(4s, $count: infinite);
-            }
-        }
-    
-        .options {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-        
-            .option {
-                @include glass;
-                cursor: pointer !important;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-around;
-                align-items: center;
-                transition: 0.1s;
-                span {
-                    text-align: center;
-                }
-                width: 30%;
-                padding: $small_margin;
-                aspect-ratio: 1 / 1;
-            }
-    
-            .logs svg {
-                fill: var(--text-color);
-                height: 50%;
-                transition: 0.05s;
-            }
-        
-            .option:hover {
-                background-color: var(--prompt-color);
-                span {
-                    @include gemini_gradient_text_animated(4s, $count: infinite);
-                    font-weight: 800;
-                }
-                svg {
-                    height: 47.5%;
-                }
-            }
-        }
-    }
 
     .messages {
 
@@ -374,8 +381,7 @@ div.gemini-sparkle {
         
             img.gemini-sparkle {
                 height: $small_length;
-                margin: calc(($small_length / 2 * 3 + $small_margin) / 2) $small_margin 0 0; //half of <p>
-                transform: translateY(calc(-1 * $small_length / 2));
+                margin: $small_margin; //half of <p>
             }
         
             .typing {
@@ -426,9 +432,7 @@ div.gemini-sparkle {
         min-height: $prompt_height;
         height: auto;
         display: flex;
-        justify-content: space-between;
         flex-direction: row;
-        align-items: flex-end;
         padding: $small_margin;
 
         $sl: math.div($small_length, 1px);
@@ -440,17 +444,18 @@ div.gemini-sparkle {
             overflow: hidden;
             padding: 0 calc(2 *$small_margin);
             font-size: $p;
-            min-height: calc($p + $small_margin);
+            min-height: $p;
             max-height: 50dvh;
             border: none;
             outline: none;
             color: var(--text-color);
             cursor: text !important;
             align-self: center;
-        }
-        .text-input[contenteditable]:empty::before {
-            content: "Message Gemini";
-            opacity: 0.5;
+
+            &[contenteditable]:empty::before {
+                content: "Message Gemini";
+                opacity: 0.5;
+            }
         }
 
         .image-input {
