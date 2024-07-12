@@ -31,19 +31,10 @@ const max_size = 1000000 * 10; // in bytes
 var html_data_path = null;
 
 var model = selected_model_name.innerText; //Gets default model name from HTML
+document.getElementById(model).classList.add("selected");
+
 var promise = false; // response/other promises that require waiting before sending response 
 var input = false; // input acceptance (whitespace only - false)
-
-/**
- * calls custom alert in red color and error message
- * @param {String} error_message
- * @param {Number} error_code
- */
-function errorAlert(error_message, error_code) {
-    console.log("Error")
-    console.error(`Error ${error_code}:${error_message}`);
-    customAlert(error_message, 'error');
-}
 
 
 /**
@@ -80,9 +71,15 @@ function promisedEmit(event, data = null) {
  * @param {String} model - model name 
 */
 function changeModel(model_name) {
+    old_model = model;
     model = model_name
-    selected_model_name.innerText = model;
-    promisedEmit('change_chat_model', { model_name: model });
+    if (old_model != model) {
+        document.getElementById(old_model).classList.remove("selected");
+        document.getElementById(model).classList.add("selected");
+
+        selected_model_name.innerText = model;
+        promisedEmit('change_chat_model', { model_name: model });
+    }
 }
 
 /**
@@ -127,11 +124,11 @@ function loadChat(html_data_path, attempts = 0) {
             if (attempts < max_attempts) {
                 setTimeout(loadChat, timeout / max_attempts, html_data_path, attempts + 1);
             }
+            text = "";
         }
-        else {
-            messages.innerHTML = text;
-            scrollToBottom(messages_container);
-        }
+        
+        messages.innerHTML = text;
+        scrollToBottom(messages_container);
     })
     .catch(
         error => console.error('Error fetching the file:', error)
@@ -176,11 +173,13 @@ function downloadChat() {
     });
 }
 
-
+/**
+ * uploads chat to server
+ * @param {String} data_url 
+ */
 function uploadChat(data_url) {
     promisedEmit('load_chat', data_url);
 }
-
 
 
 /**
@@ -204,14 +203,28 @@ function sendBase64Data(data, filename, filetype) {
     socket.emit('base64_load_end', {filename: filename});
 }
 
+/**
+ * creates file container of the attached file
+ * @param {String} image_src 
+ * @param {String} image_name 
+ * @returns 
+ */
 function fileContainer(image_src, image_name) {
     var file_container = document.createElement('div')
-    var img = document.createElement('div');
     file_container.id = image_name;
-    file_container.classList = 'file-container';
+    file_container.classList.add('file-container');
+    
+    var img = document.createElement('div');
     img.classList.add('img');
     img.style.backgroundImage = `url(${image_src})`;
+
+    var remove_button = document.createElement('span');
+    remove_button.classList.add('remove-button');
+    remove_button.onclick = function() { removeFile(image_name); };
+
+    file_container.appendChild(remove_button);
     file_container.appendChild(img);
+    
     return file_container
 }
 
@@ -251,15 +264,10 @@ function uploadImage(image) {
             filesData[image.name] = imageData;
 
             const file_container = fileContainer(imageData.src, image.name)
-            var remove_button = document.createElement('span');
-            remove_button.classList.add('remove-button');
-            remove_button.innerText = 'X';
-            remove_button.onclick = function(event) { removeFile(image.name);};
 
-            input_files_container.hidden = false;
-
-            file_container.prepend(remove_button);
             input_files_container.appendChild(file_container);
+            
+            input_files_container.hidden = false;
 
             files_size += image.size;
 
@@ -269,6 +277,10 @@ function uploadImage(image) {
     reader.readAsDataURL(image);
 }
 
+/**
+ * removes attached file
+ * @param {String} filename 
+ */
 function removeFile(filename) {
     document.getElementById(filename).remove();
     files_size -= filesData[filename].size;
