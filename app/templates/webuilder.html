@@ -16,7 +16,7 @@
     <header>
         <div id="selected-model" onmousedown="Menu(this, 'models')">
             {% include '/svgs/gemini_sparkle.svg' %}
-            <h5 id="model-name" class="model-name">{{ default_model }}</h5>
+            <h6 id="model-name" class="model-name">{{ default_model }}</h6>
         </div>
         <div class="header-buttons">
             <div title="clear chat" id="clear-chat" class="header-btn" onclick="clearChat()">
@@ -35,7 +35,9 @@
     <div>
         <div id="models" class="hidden">
             {% for model in models%}
-                <h6 id="{{ model }}" class="model" onmousedown="changeModel(this.id); Menu(this, 'models')">{{ model }}</h6>
+                <p id="{{ model }}" class="model" onmousedown="changeModel(this.id); Menu(this, 'models')">
+                    {% include '/svgs/gemini_sparkle.svg' %}{{ model }}
+                </p>
             {% endfor %}
         </div>
     
@@ -51,7 +53,7 @@
 
     <div id="chat_container" class="chat_container">
 
-        <div id="webuilder-container" class="webuilder-container">
+        <div id="webuilder-container" class="webuilder-container messages-container">
             
             <div id="welcoming">
                 
@@ -76,10 +78,7 @@
                     {% include '/svgs/image_upload.svg' %}
                 </label>
 
-                <!-- <span id="text-input" class="text-input" type="text" role="textbox" contenteditable="plaintext-only"></span> -->
-                <label class="text-input" class="text-input">
-                    <textarea oninput="this.parentNode.dataset.value = this.value" rows="1" placeholder="Message Gemini"></textarea>
-                </label>
+                <span title="send message" id="text-input" class="text-input" type="text" role="textbox" contenteditable="plaintext-only"></span>
 
                 <div id="submit" class="submit disabled">
                     {% include '/svgs/send_message.svg' %}
