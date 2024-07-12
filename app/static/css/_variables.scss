@@ -1,14 +1,40 @@
-// Light theme variables
+@use 'sass:math';
+@use 'sass:color';
+
+/* Light theme variables */
 $light-primary-color: rgb(245, 245, 245);
 $light-secondary-color: rgb(224, 224, 255);
 $light-text-color: rgb(50, 50, 50);
 $light-prompt-color: rgb(210, 210, 210);
 $light-border-color: darken($light-prompt-color, 10%);
 
-
-// Dark theme variables
+/* Dark theme variables */
 $dark-primary-color: rgb(24, 24, 24);
 $dark-secondary-color: rgb(1, 13, 63);
 $dark-text-color: rgb(255, 255, 255);
 $dark-prompt-color: rgb(47, 47, 47);
 $dark-border-color: lighten($dark-prompt-color, 10%);
+
+
+/* Default dimensions */
+$small_length: 32px;
+// Circle with diameter $small_length has square inside length $smaller_length
+$small_length_unitless: math.div($small_length, 1px);
+$smaller_length: math.sqrt(math.pow(math.div($small_length_unitless, 2), 2) * 2) + px;
+
+$small_margin: 8px;
+$border_radius: $small_margin;
+
+$p: 1rem;
+$h1: 2.5rem;
+$h: $h1;
+
+@for $i from 2 through 6 {
+    $prev: nth($h, $i - 1);
+    $h: append($h , calc($prev / calc(1.25 - $i * 0.025)));
+}
+
+$scrollbar_width: calc($small_length / 2);
+
+$transition_time: 0.1s;
+$faint_opacity: 0.5;

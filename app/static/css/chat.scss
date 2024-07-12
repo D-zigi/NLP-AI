@@ -1,23 +1,14 @@
-@use 'sass:math';
-@use 'sass:color';
 @import 'mixins';
 
 $chat_width: 800px;
-$small_length: 32px;
-$small_margin: 8px;
-$scrollbar_width: calc($small_length / 2);
-$prompt_height: calc($small_length + 2 * $small_margin);
-$prompt_full_height: calc($prompt_height + $small_margin * 4 + 5px);
+
+$prompt_height: calc(var(--small_length) + 2 * var(--small_margin));
+$prompt_full_height: calc($prompt_height + var(--small_margin) * 4 + 5px);
 $header_height: $prompt_full_height;
-$border_radius: $small_margin;
 
-$p: 1rem;
-$h1: 2.5rem;
-h1 { font-size: $h1; }
-h2 { font-size: calc($h1 / 1.333); }
-h3 { font-size: calc($h1 / (1.333 * 1.333)); }
-
-
+:root {
+    --chat_width: #{$chat_width};
+}
 
 .light-theme {
     #theme-switcher svg {
@@ -32,29 +23,51 @@ h3 { font-size: calc($h1 / (1.333 * 1.333)); }
 
 
 #models{
-    @include glass;
-    height: auto;
-    @include vendor-prefix(width, fit-content);
     position: absolute;
-    padding: $small_margin;
+    @include glass;
+    @include vendor-prefix(width, fit-content);
+    padding: var(--small_margin);
     z-index: 10;
-
-    transition: opacity 0.05s, visibility 0.05s;
+    transition: opacity var(--transition_time), visibility var(--transition_time);
     will-change: opacity, visibility;
     opacity: 1;
     visibility: visible;
 
     .model {
+        display: flex;
+        align-items: center;
+        gap: var(--small_margin);
         width: 100%;
         opacity: 0.5;
-        display: block;
+        height: min-content;
         margin: 0;
-        padding: $small_margin;
+        padding: var(--small_margin);
         cursor: pointer;
         @include vendor-prefix(user-select, none);
+        transition: all var(--transition_time);
+        transform: translateX(calc(var(--small_length) * (-1)));
+
+        &.selected {
+            opacity: 1;
+            transform: translateX(0);
+            svg {
+                opacity: 1;
+            }
+            pointer-events: none;
+        }
 
         &:hover {
-            opacity: 1;
+            opacity: calc(1 - var(--faint_opacity) / 2);
+            transform: translateX(0);
+
+            svg {
+                opacity: calc(1 - var(--faint_opacity) / 2);
+            }
+        }
+
+        svg {
+            transition: opacity var(--transition_time);
+            opacity: 0;
         }
     }
 
@@ -68,7 +81,7 @@ h3 { font-size: calc($h1 / (1.333 * 1.333)); }
 
 header {
     width: 100vw;
-    padding: $small_margin 5vw;
+    padding: var(--small_margin) 5vw;
     height: $header_height;
     display: flex;
     flex-direction: row;
@@ -82,17 +95,35 @@ header {
         cursor: pointer;
         @include vendor-prefix(user-select, none);
         @include vendor-prefix(width, fit-content);
-        padding: $small_margin;
-        border-radius: calc($h1 / math.pow(1.333, 4) + 2 * $small_margin);
-        font-weight: 600 !important;
+        padding: var(--small_margin);
+        border-radius: calc(var(--h5) + 2 * var(--small_margin));
         display: flex;
         max-width: 60vw;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        opacity: 0.5;
+        transition: opacity var(--transition_time), background-color var(--transition_time);
+
+        &::after {
+            content: '˅';
+            font-size: var(--p);
+            font-weight: 1000;
+            -webkit-text-stroke: 0.5px;
+            margin-left: 8px;
+        }
+        
+        &:hover {
+            opacity: 1;
+        }
+
+        &.active {
+            background-color: var(--prompt-color);
+            opacity: 1;
+        }
 
         * {
-            margin: 0 calc($small_margin / 4);
+            margin: 0 calc(var(--small_margin) / 4);
         }
 
         .model-name {
@@ -101,17 +132,6 @@ header {
             text-overflow: clip;
         }
 
-        &::after {
-            content: '˅';
-            font-size: $p;
-            font-weight: 1000;
-            -webkit-text-stroke: 0.5px;
-            margin-left: 8px;
-        }
-
-        &:hover {
-            background-color: var(--prompt-color);
-        }
     }
 
     .header-buttons {
@@ -121,12 +141,12 @@ header {
             cursor: pointer;
             @include vendor-prefix(user-select, none);
             border-radius: 50%;
-            padding: calc($small_margin / 2);
+            padding: calc(var(--small_margin) / 2);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: calc($small_margin / 2);
-            transition: 0.1s;
+            margin: calc(var(--small_margin) / 2);
+            transition: background-color var(--transition_time), opacity var(--transition_time);
             
             &:hover {
                 opacity: 0.75;
@@ -137,8 +157,8 @@ header {
             }
     
             svg {
-                height: $small_length;
-                width: $small_length;
+                height: var(--small_length);
+                width: var(--small_length);
             }
         }
     
@@ -186,41 +206,52 @@ div.gemini-sparkle {
 .files-container {
     @include vendor-prefix(backdrop-filter, blur(8px));
     display: flex;
-    gap: $small_margin;
+    gap: var(--small_margin);
     .file-container {
         background-color: var(--prompt-color);
-        padding: $small_margin;
-        border-radius: calc($border_radius + $small_margin);
+        padding: var(--small_margin);
+        border-radius: calc(var(--border_radius) + var(--small_margin));
         border: var(--border-color) 1px solid;
 
+        .remove-button {
+            $size: calc(1.5 * var(--p));
+            float: right;
+            height: $size;
+            width: $size;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background-color: var(--prompt-color);
+            margin: var(--small_margin);
+            @include vendor-prefix(user-select, none);
+            cursor: pointer;
+            transition: background-color var(--transition_time);
+
+            &::after {
+                content: "\00d7";
+                font-size: var(--h5);
+                text-align: center;
+                transform: translateY(-1px); //small font inaccuracy disturbing visual centering
+            }
+        
+            &:active {
+                opacity: 0.75;
+            }
+        }
+
         .img {
-            border-radius: $border_radius;
+            border-radius: var(--border_radius);
             background-position: center;
             background-size: cover;
             width: 100%;
             height: 100%;
         }
     }
-}
-.files-container[hidden] {
-    @include vendor-prefix(backdrop-filter, none);
-}
-.remove-button {
-    $size: 1.5em;
-    float: right;
-    height: $size;
-    width: $size;
-    line-height: $size;
-    text-align: center;
-    border-radius: 50%;
-    background-color: var(--prompt-color);
-    margin: $small_margin;
-    @include vendor-prefix(user-select, none);
-    cursor: pointer;
-    transition: 0.1s;
-}
-.remove-button:active {
-    opacity: 0.75;
+
+    &[hidden] {
+        @include vendor-prefix(backdrop-filter, none);
+    }
 }
 
 
@@ -235,11 +266,12 @@ div.gemini-sparkle {
         flex-direction: column;
         align-items: center;
         * {
+            text-align: center;
             @include vendor-prefix(width, fit-content);
         }
 
         img.gemini-sparkle {
-            margin-left: $small_margin;
+            margin-left: var(--small_margin);
             align-self: center;
             height: max-content;
         }
@@ -264,19 +296,19 @@ div.gemini-sparkle {
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
-            transition: 0.1s;
+            transition: all var(--transition_time);
             span {
                 text-align: center;
             }
             width: 30%;
-            padding: $small_margin;
+            padding: var(--small_margin);
             aspect-ratio: 1 / 1;
         }
 
         .logs svg {
             fill: var(--text-color);
             height: 50%;
-            transition: 0.05s;
+            transition: all var(--transition_time);
         }
     
         .option:hover {
@@ -296,8 +328,8 @@ div.gemini-sparkle {
 .messages-container {
     width: 100%;
     height: calc(100% - $prompt_full_height);
-    padding: 0 calc((100vw - $chat_width) / 2);
-    font-size: $p;
+    padding: 0 calc((100vw - var(--chat_width)) / 2);
+    font-size: var(--p);
     overflow-y: scroll;
 
     * {
@@ -307,26 +339,27 @@ div.gemini-sparkle {
 
 
     .messages {
+        padding: calc(var(--small_margin) * 2) 0;
 
         .message {
             clear: both;
             
-            $elements_padding: calc($small_margin * 2);
+            $elements_padding: calc(var(--small_margin) * 2);
             pre{
                 background-color: black;
                 padding: $elements_padding;
                 padding-top: 0;
                 margin-top: 0;
-                border-radius: $border_radius;
+                border-radius: var(--border_radius);
 
                 .code-header {
                     background-color: var(--prompt-color);
                     width: calc(100% + 2 * $elements_padding);
-                    margin-left: -$elements_padding;
+                    margin-left: calc($elements_padding * (-1));
                     padding: calc(0.5 * $elements_padding) $elements_padding;
-                    border-radius: $border_radius $border_radius 0 0;
+                    border-radius: var(--border_radius) var(--border_radius) 0 0;
                     margin-bottom: $elements_padding;
-                    font-size: $p;
+                    font-size: var(--p);
                 }
             }
 
@@ -349,8 +382,8 @@ div.gemini-sparkle {
             background-color: var(--prompt-color);
             border-radius: calc($prompt_height / 2);
             max-width: 60%;
-            padding: $small_margin calc($small_margin * 2);
-            margin: $small_margin 0;
+            padding: var(--small_margin) calc(var(--small_margin) * 2);
+            margin: var(--small_margin) 0;
             float: right;
         
             .editable-hint {
@@ -362,7 +395,7 @@ div.gemini-sparkle {
                 border-radius: calc($prompt_height / 2);
                 @include vendor-prefix(backdrop-filter, blur(1px));
                 opacity: 0;
-                transition: 0.1s;
+                transition: opacity var(--transition_time);
                 
                 &:hover {
                     opacity: 1;
@@ -380,18 +413,18 @@ div.gemini-sparkle {
             flex-direction: row;
         
             img.gemini-sparkle {
-                height: $small_length;
-                margin: $small_margin; //half of <p>
+                height: var(--small_length);
+                margin: var(--small_margin); //half of <p>
             }
         
             .typing {
-                margin-top: calc(($small_length / 2 * 3 + $small_margin) / 2); //half of <p>
-                transform: translateY(calc(-1 * $small_length / 2));
-                padding-left: $small_margin;
+                margin-top: calc((var(--small_length) / 2 * 3 + var(--small_margin)) / 2); //half of <p>
+                transform: translateY(calc(-1 * var(--small_length) / 2));
+                padding-left: var(--small_margin);
             }
         
             div.gemini-response {
-                padding-left: $small_margin;
+                padding-left: var(--small_margin);
                 display: flex;
                 flex-direction: column;
             }
@@ -404,7 +437,7 @@ div.gemini-sparkle {
     position: absolute;
     left: 0;
     bottom: 0;
-    width: calc(100% - $scrollbar_width);
+    width: calc(100% - var(--scrollbar_width));
     background-color: transparent;
     display: flex;
     flex-direction: column;
@@ -412,39 +445,40 @@ div.gemini-sparkle {
     align-items: center;
     
     .files-container {
-        padding-bottom: $small_margin;
-        border-radius: calc($border_radius * 2) calc($border_radius * 2) 0 0;
+        padding-bottom: var(--small_margin);
+        border-radius: calc(var(--border_radius) * 2) calc(var(--border_radius) * 2) 0 0;
         flex-direction: row;
         flex-wrap: wrap;
-        width: calc($chat_width - $scrollbar_width);
+        width: calc(var(--chat_width) - var(--scrollbar_width));
         .file-container {
             $cards: 4;
-            width: calc((100% - (3 * $small_margin)) / $cards);
+            width: calc((100% - (3 * var(--small_margin))) / $cards);
             aspect-ratio: 1 / 1;
+        }
+
+        &[hidden] {
+            display: none;
         }
     }
 
     .prompt {
         @include glass;
-        width: calc($chat_width - $scrollbar_width);
+        width: calc(var(--chat_width) - var(--scrollbar_width));
         background-color: var(--prompt-color);
         border-radius: calc($prompt_height / 2);
         min-height: $prompt_height;
         height: auto;
         display: flex;
         flex-direction: row;
-        padding: $small_margin;
-
-        $sl: math.div($small_length, 1px);
-        $svg_length: math.sqrt(math.pow(math.div($sl, 2), 2) * 2) + px;
+        padding: var(--small_margin);
 
         .text-input {
             display: block;
             width: 100%;
             overflow: hidden;
-            padding: 0 calc(2 *$small_margin);
-            font-size: $p;
-            min-height: $p;
+            padding: 0 calc(2 *var(--small_margin));
+            font-size: var(--p);
+            min-height: var(--p);
             max-height: 50dvh;
             border: none;
             outline: none;
@@ -460,8 +494,8 @@ div.gemini-sparkle {
 
         .image-input {
             cursor: pointer !important;
-            height: $small_length;
-            transition: opacity 0.1s;
+            height: var(--small_length);
+            transition: opacity var(--transition_time);
             aspect-ratio: 1 / 1;
             fill: var(--text-color) !important;
             border-radius: 50%;
@@ -476,7 +510,7 @@ div.gemini-sparkle {
             }
         }
         .image-input svg {
-            height: $svg_length;
+            height: var(--smaller_length);
             aspect-ratio: 1 / 1;
             $svg_color: var(--text-color);
 
@@ -490,18 +524,18 @@ div.gemini-sparkle {
 
         .submit {
             cursor: pointer !important;
-            transition: opacity 0.1s;
+            transition: opacity var(--transition_time);
             background-color: var(--text-color);
             border-radius: 50%;
-            height: $small_length;
+            height: var(--small_length);
             aspect-ratio: 1 / 1;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         .submit svg {
-            height: $svg_length;
-            width: $svg_length;
+            height: var(--smaller_length);
+            width: var(--smaller_length);
             fill: var(--prompt-color) !important; 
         }
 
@@ -509,7 +543,7 @@ div.gemini-sparkle {
 
     > span {
         opacity: 0.5;
-        margin: $small_margin;
+        margin: var(--small_margin);
         font-size: 12.5px;
         display: block;
         text-align: center;
@@ -521,10 +555,10 @@ div.gemini-sparkle {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: calc($prompt_full_height + $small_margin);
+    bottom: calc($prompt_full_height + var(--small_margin));
     background-color: var(--prompt-color);
     border-radius: calc($prompt_height / 2);
-    padding: $small_margin;
+    padding: var(--small_margin);
     max-width: max-content;
     width: 90vw;
     @include glass;
@@ -536,78 +570,39 @@ div.gemini-sparkle {
 }
 
 
-
+/* Scrollbar container */
 ::-webkit-scrollbar {
-    width: $scrollbar_width; /* Width of the scrollbar */
+    width: var(--scrollbar_width);
 }
 /* Track (the area around the scrollbar) */
 ::-webkit-scrollbar-track {
     background: var(--prompt-color);
-    border-radius: calc($scrollbar_width / 2);
+    border-radius: calc(var(--scrollbar_width) / 2);
 }
 /* Handle (the draggable part of the scrollbar) */
 ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: calc(($scrollbar_width) / 2);
-    border: calc($scrollbar_width / 5) solid var(--prompt-color);
-}
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    border-radius: calc((var(--scrollbar_width)) / 2);
+    border: calc(var(--scrollbar_width) / 5) solid var(--prompt-color);
+
+    /* Handle on hover */
+    &:hover {
+        background: #555;
+    }
 }
 
 
 
 @media screen and (max-width: $chat_width) {
-
+    :root {
+        --chat_width: 90dvw;
+    }
+    
     ::-webkit-scrollbar { display: none; }
 
-    $chat_width: 90vw;
-    header {
-        .header-buttons {
-            #download-chat {
-                display: none;
-            }
-        }
-    }
+    .header-buttons #download-chat { display: none; }
 
-    .chat_container {
-    }
-    .messages-container {
+    #welcoming {h2, .options { display: none; }}
 
-        padding: 0 calc((100vw - $chat_width) / 2);
-        
-        #welcoming {
-
-            text-align: center !important;
-            
-            h2 {
-                display: none;
-            }
-            
-            .options {
-                display: none; 
-            }
-
-        }
-
-        .message {
-            pre {
-                font-size: x-small;
-            }
-        }
-
-    }
-
-    .prompt-container {
-        width: 100%;
-
-        .files-container {
-            width: $chat_width;
-        }
-
-        .prompt {
-            width: $chat_width;
-        }
-    }
+    pre { font-size: x-small; }
 }

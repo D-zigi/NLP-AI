@@ -4,6 +4,23 @@
 @import 'animations';
 @import 'fonts';
 
+:root {
+    --small_length: #{$small_length};
+    --smaller_length: #{$smaller_length};
+    --small_margin: #{$small_margin};
+    --border_radius: #{$border_radius};
+
+    --p: #{$p};
+    @for $i from 1 through 6 {
+        --h#{$i}: #{nth($h, $i)};
+    }
+
+    --scrollbar_width: #{$scrollbar_width};
+
+    --transition_time: #{$transition_time};
+    --faint_opacity: #{$faint_opacity};
+}
+
 html, body {
     height: 100%;
     width: 100%;
@@ -15,14 +32,22 @@ html, body {
 body {
     background-color: var(--primary-color) !important;
     color: var(--text-color) !important;
-}
-
-* {
-    font-family: 'Google Sans' !important;
+    * {
+        font-family: 'Google Sans' !important;
+    }
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 400 !important;
+}
+@for $i from 1 through 6 {
+    h#{$i} {
+        font-size: nth($h, $i);
+    }
+}
+
+p {
+    font-size: $p;
 }
 
 img {
@@ -33,7 +58,7 @@ img {
 
 .disabled {
     pointer-events: none;
-    opacity: 0.5;
+    opacity: var(--faint_opacity);
 }
 
 .hidden {
@@ -80,8 +105,4 @@ img {
     span:nth-child(3) {
         animation-delay: 0.8s
     }
-}
-
-.opening {
-    //TODO
 }

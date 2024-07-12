@@ -1,3 +1,6 @@
+/* Light theme variables */
+/* Dark theme variables */
+/* Default dimensions */
 :root {
   --primary-color: rgb(24, 24, 24);
   --secondary-color: rgb(1, 13, 63);
@@ -25,6 +28,23 @@
   font-weight: 400;
   font-display: swap;
 }
+:root {
+  --small_length: 32px;
+  --smaller_length: 22.627416998px;
+  --small_margin: 8px;
+  --border_radius: 8px;
+  --p: 1rem;
+  --h1: 2.5rem;
+  --h2: 2.0833333333rem;
+  --h3: 1.7730496454rem;
+  --h4: 1.5417823003rem;
+  --h5: 1.3704731559rem;
+  --h6: 1.2458846871rem;
+  --scrollbar_width: 16px;
+  --transition_time: 0.1s;
+  --faint_opacity: 0.5;
+}
+
 html, body {
   height: 100%;
   width: 100%;
@@ -37,13 +57,40 @@ body {
   background-color: var(--primary-color) !important;
   color: var(--text-color) !important;
 }
-
-* {
+body * {
   font-family: "Google Sans" !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 400 !important;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2.0833333333rem;
+}
+
+h3 {
+  font-size: 1.7730496454rem;
+}
+
+h4 {
+  font-size: 1.5417823003rem;
+}
+
+h5 {
+  font-size: 1.3704731559rem;
+}
+
+h6 {
+  font-size: 1.2458846871rem;
+}
+
+p {
+  font-size: 1rem;
 }
 
 img {
@@ -56,7 +103,7 @@ img {
 
 .disabled {
   pointer-events: none;
-  opacity: 0.5;
+  opacity: var(--faint_opacity);
 }
 
 .hidden {
