@@ -1,6 +1,6 @@
 # About Project
 This project consists of two separate parts: Gemini API apps, and own NLP model.
-The first part of this project was created for Gemini API competition. The idea of this part was to create Gemini API based on chat bot and other cusom usable advnaced and concentrated apps on specific tasks like web builder. The whole project uses Flask.
+The first part of this project was created for the Gemini API competition. The idea of this part was to create Gemini API based on chatbot and other custom usable advanced and concentrated apps on specific tasks like web builder. The whole project uses Flask.
 
 # Gemini API apps
 
@@ -16,17 +16,17 @@ This part of the project contains the client-side JavaScript code for interactin
 
 ## Usage
 
-This project part is designed to be ran as full project out of the box. To use it, follow these steps:
+This project part is designed to be run as a full project that is out of the box. To use it, follow these steps:
 
-1. **Add GeminiAPI key:** To use the Gemini API, you need an API key. You can create a key with one click in Google AI Studio. [Get an API key](https://makersuite.google.com/app/apikey).
+1. **Add Gemini API key:** You need an API key to use the Gemini API. You can create a key with one click in Google AI Studio. [Get an API key](https://makersuite.google.com/app/apikey).
 Once gotten one add the key into your dot env file.
 ```dotenv
 GOOGLE_API_KEY=YOUR_API_KEY
 FIREBASE_CREDENTIALS='firebase.json'
 TMP_PATH='app/static/tmp'
 ```
-2. **Add Firebase:** For auto saving chats for users you need Firebase database and storage. Create Firebase for your project and download its secret key.[Firebase](https://firebase.google.com/).
-Your Firebase sercret key json keys should look like firebase template.json:
+2. **Add Firebase:** You need a Firebase database and storage for auto-saving chats for users. Create Firebase for your project and download its secret key. [Firebase](https://firebase.google.com/).
+Your Firebase secret key json keys should look like firebase template.json:
 ```json
 {
   "type": "",
@@ -42,7 +42,7 @@ Your Firebase sercret key json keys should look like firebase template.json:
   "universe_domain": ""
 }
 ```
-rename you secret key to firebase.json and upload it to your root project folder.
+rename your secret key to firebase.json and upload it to your root project folder.
 
 3. **Create virtual environment:** 
 ```bash
