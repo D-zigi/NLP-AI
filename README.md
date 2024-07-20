@@ -17,10 +17,12 @@ This part of the project contains the client-side JavaScript code for interactin
 ## Apps
 
 ### Gemini chatbot
-    This app provides a basic chat interface for interacting with the Gemini API. Users can type messages and receive responses from the Gemini model.
+
+This app provides a basic chat interface for interacting with the Gemini API. Users can type messages and receive responses from the Gemini model.
 
 ### Gemini web builder
-    This app allows users to build simple websites using the Gemini API. Users can provide text descriptions of their desired website, and the Gemini API will generate the HTML code.
+
+This app allows users to build simple websites using the Gemini API. Users can provide text descriptions of their desired website, and the Gemini API will generate the HTML code.
 
 # own NLP model:
 
