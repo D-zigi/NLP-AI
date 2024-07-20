@@ -16,6 +16,6 @@ def load_environ():
 if __name__ == '__main__':
     load_environ()
 
-    from app import create_app, socketio
-    app = create_app()
+    from app import create_app
+    app, socketio = create_app()
     socketio.run(app)

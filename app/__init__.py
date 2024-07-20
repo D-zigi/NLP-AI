@@ -17,4 +17,4 @@ def create_app():
     app.register_blueprint(main)
     socketio.init_app(app)
 
-    return app
+    return app, socketio

@@ -2,7 +2,7 @@
 Blueprint
 for routes and views for the flask application.
 """
-import requests
+# import requests
 from flask import Blueprint, make_response, render_template, redirect, url_for, request, abort
 from .errors import errors
 from .gemini_api.chat import list_model_names, DEFAULT_MODEL
@@ -16,7 +16,7 @@ def base():
     """
     opens base page for the application
     """
-    return redirect(url_for('main.chat'))
+    return geminiapi_default()
     return render_template('base.html')
 
 @main.route('/about')
@@ -41,13 +41,42 @@ def visualization():
     else:
         abort(403)
 
-@main.route('/credits')
-def credits_page():
+
+@main.route('/geminiapi/')
+def geminiapi_default():
     """
-    opens 'credits' page
-    (provides the app with the credits page)
+    opens 'geminiapi' page with default app
+    (provides the app with the geminiapi page)
     """
-    return render_template('credits.html')
+    return redirect(url_for('main.geminiapi', app='chatbot'))
+
+
+@main.route('/geminiapi/<app>')
+def geminiapi(app):
+    """
+    opens 'geminiapi' page with chosen app
+    (provides the app with the geminiapi page)
+    """
+    if app == 'chatbot':
+        models = set(list_model_names(['latest']))
+    elif app == 'webuilder':
+        models = set(list_model_names(['-vision', '-1.0']))
+    else:
+        return geminiapi_default()
+    models.add(DEFAULT_MODEL)
+
+    response = make_response(
+        render_template(
+            'geminiapi.html', 
+            models=models,
+            default_model=DEFAULT_MODEL,
+            app=app
+        )
+    )
+    response.headers['Cache-Control'] = 'public, max-age=3600'
+    response.headers['Vary'] = 'User-Agent'
+
+    return response
 
 @main.route('/webuilder', methods=['GET', 'POST'])
 def webuilder():
@@ -55,34 +84,15 @@ def webuilder():
     opens 'webuilder' page
     (provides the app with the webuilder page)
     """
-    if request.method == 'GET':
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render_template('webuilder.html')
+    else:
+        abort(403)
 
-    elif request.method == 'POST':
-        return render_template('webuilder.html')
-        # url = request.form['url']
-        # response = requests.get(url)
-        # soup = BeautifulSoup(response.content, 'html.parser')
-        # title = soup.title.string
-        # return render_template('webuilder.html', title=title, url=url)
-
-@main.route('/chatbot', methods=['GET', 'POST'])
-def chat():
+@main.route('/credits')
+def credits_page():
     """
-    opens 'chatbot' page
-    (provides the app with the chatbot page)
+    opens 'credits' page
+    (provides the app with the credits page)
     """
-    models = set(list_model_names())
-    models.add(DEFAULT_MODEL)
-
-    response = make_response(
-        render_template(
-            'chatbot.html', 
-            models=models,
-            default_model = DEFAULT_MODEL
-        )
-    )
-    response.headers['Cache-Control'] = 'public, max-age=3600'
-    response.headers['Vary'] = 'User-Agent'
-
-    return response
+    return render_template('credits.html')
