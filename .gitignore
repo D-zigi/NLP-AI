@@ -19,8 +19,7 @@ firebase.json
 /app/static/css/header.css.map
 /app/static/css/styles.css.map
 /app/static/css/error.css.map
-/app/static/css/chat.css.map
 /app/static/css/credits.css.map
-/app/static/css/webuilder.css.map
+/app/static/css/geminiapi.css.map
 
 tests.ipynb
