@@ -14,6 +14,11 @@ This part of the project contains the client-side JavaScript code for interactin
 * **Chat History Management:** Allows users to load and save chat histories, preserving their interactions for future reference.
 * **Error Handling:** Implements robust error handling mechanisms to gracefully manage potential issues during communication with the Gemini API.
 
+# own NLP model:
+
+Not implemented yet.
+
+
 ## Usage
 
 This project part is designed to be run as a full project that is out of the box. To use it, follow these steps:
@@ -57,5 +62,9 @@ pip install -r requirements.txt
 flask run
 ```
 
-# own NLP model:
-Not implemented yet.
+## License
+This project is licensed under the [Apache License](LICENSE).
+
+## Contact
+
+D-zigi - [yusufovdzigi@gmail.com](mailto:yusufovdzigi@gmail.com)
