@@ -21,7 +21,6 @@ $header_height: $prompt_full_height;
 }
 
 
-
 #models{
     position: absolute;
     @include glass;
@@ -81,7 +80,7 @@ $header_height: $prompt_full_height;
 
 header {
     width: 100vw;
-    padding: var(--small_margin) 5vw;
+    padding: 0 5vw;
     height: $header_height;
     display: flex;
     flex-direction: row;
@@ -189,7 +188,7 @@ div.gemini-sparkle {
     height: 100px;
     position: fixed;
     top: 50%;
-    left: 50%;
+    left: calc(50% - var(--scrollbar_width) / 2);
     opacity: 0.5;
     z-index: -1;
     transform: translate(-50%,-50%);
@@ -265,14 +264,13 @@ div.gemini-sparkle {
         display: flex;
         flex-direction: column;
         align-items: center;
-        * {
+        >* {
             text-align: center;
             @include vendor-prefix(width, fit-content);
         }
 
-        img.gemini-sparkle {
+        svg {
             margin-left: var(--small_margin);
-            align-self: center;
             height: max-content;
         }
 
@@ -286,9 +284,11 @@ div.gemini-sparkle {
         width: 100%;
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
-    
+        flex-wrap: wrap;
+        gap: 5%;
+        
         .option {
             @include glass;
             cursor: pointer !important;
@@ -296,32 +296,60 @@ div.gemini-sparkle {
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
-            transition: all var(--transition_time);
+            margin-top: 1em;
+
             span {
                 text-align: center;
             }
-            width: 30%;
-            padding: var(--small_margin);
-            aspect-ratio: 1 / 1;
-        }
 
-        .logs svg {
-            fill: var(--text-color);
-            height: 50%;
-            transition: all var(--transition_time);
-        }
-    
-        .option:hover {
-            background-color: var(--prompt-color);
-            span {
-                @include gemini_gradient("text");
-                @include gradient_animation(4s, $count: infinite);
-                font-weight: 800;
-            }
+            width: 30%;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            padding: var(--small_margin);
+            text-decoration: none;
+
             svg {
-                height: 47.5%;
+                fill: var(--text-color);
+                height: 50%;
+                width: auto;
+            }
+
+            &:hover {
+                background-color: var(--prompt-color);
+                span {
+                    @include gemini_gradient("text");
+                    @include gradient_animation(4s, $count: infinite);
+                    font-weight: 800;
+                }
+
+                svg {
+                    height: 47.5%;
+                }
             }
         }
+    }
+}
+
+.server-response {
+    display: flex;
+    justify-content: center;
+    height: auto;
+    
+    .webview {
+        width: 30%;
+        aspect-ratio: 1 / 1;
+        transition: all 1s;
+        max-height: calc(100vh - 2 * $prompt_full_height - 2 * var(--small_margin));
+
+        &.active {
+            background-color: white;
+            width: 100%;
+        }
+    }
+
+    .code-container {
+        width: 100%;
+        height: 100%;
     }
 }
 
@@ -340,28 +368,12 @@ div.gemini-sparkle {
 
     .messages {
         padding: calc(var(--small_margin) * 2) 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--small_margin);
 
         .message {
             clear: both;
-            
-            $elements_padding: calc(var(--small_margin) * 2);
-            pre{
-                background-color: black;
-                padding: $elements_padding;
-                padding-top: 0;
-                margin-top: 0;
-                border-radius: var(--border_radius);
-
-                .code-header {
-                    background-color: var(--prompt-color);
-                    width: calc(100% + 2 * $elements_padding);
-                    margin-left: calc($elements_padding * (-1));
-                    padding: calc(0.5 * $elements_padding) $elements_padding;
-                    border-radius: var(--border_radius) var(--border_radius) 0 0;
-                    margin-bottom: $elements_padding;
-                    font-size: var(--p);
-                }
-            }
 
             .files-container {
                 flex-direction: row;
@@ -383,8 +395,7 @@ div.gemini-sparkle {
             border-radius: calc($prompt_height / 2);
             max-width: 60%;
             padding: var(--small_margin) calc(var(--small_margin) * 2);
-            margin: var(--small_margin) 0;
-            float: right;
+            align-self: self-end;
         
             .editable-hint {
                 position: absolute;
@@ -408,9 +419,14 @@ div.gemini-sparkle {
             }
         }
         .server-message {
+            width: 100%;
             float: left;
             display: flex;
             flex-direction: row;
+            align-self: self-start;
+
+            .text-container, .highlight, pre { width: 100%; }
+
         
             img.gemini-sparkle {
                 height: var(--small_length);
@@ -596,13 +612,20 @@ div.gemini-sparkle {
 @media screen and (max-width: $chat_width) {
     :root {
         --chat_width: 90dvw;
+        --scrollbar_width: 0%;
     }
     
     ::-webkit-scrollbar { display: none; }
 
     .header-buttons #download-chat { display: none; }
 
-    #welcoming {h2, .options { display: none; }}
+    #welcoming {
+        .options #logs { display: none !important; }
+        .option {
+            width: 40% !important;
+            font-size: small;
+        }
+    }
 
     pre { font-size: x-small; }
 }

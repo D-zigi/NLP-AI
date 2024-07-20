@@ -1,5 +1,12 @@
 /* chat sockeio connection and events */
-var socket = io('/chat', { forceBase64: true });
+const url = window.location.href.split('/')
+const appName = url[url.length - 1];
+var socket = io('/geminiapi', {
+    forceBase64: true ,
+    query: {
+        appName: appName
+    }
+});
 
 /* HTML Elements used for socket */
 var logs_input = document.getElementById('logs-input');
@@ -17,6 +24,16 @@ var messages = document.getElementById('messages')
 var server_message_common = document.getElementById('server_message_common')
 var client_message_common = document.getElementById('client_message_common')
 var welcoming_message = document.getElementById('welcoming')
+
+if (appName == 'chatbot') {
+    var defaultData = '';
+}
+else if(appName == 'webuilder') {
+    var server_response = document.getElementById("server-response");
+    var webview = document.getElementById('webview');
+    var code_container = document.getElementById('code-container');
+    var defaultData = server_response.outerHTML;
+}
 
 const image_supported = [".png", ".jpg", ".jpeg", ".webp", ".heif", ".heic"]
 const logs_supported = [".pkl"]
@@ -95,7 +112,6 @@ function updateChat(html_data) {
         const start = i * chunkSize;
         const end = (i + 1) * chunkSize;
         const chunk = html_data.substring(start, end);
-        console.log(chunk);
         socket.emit('update_chat', chunk);
     }
 }
@@ -104,7 +120,7 @@ function updateChat(html_data) {
  * clears chat on the server and client
  */
 function clearChat() {
-    promisedEmit('clear_chat')
+    promisedEmit('clear_chat', defaultData)
 }
 
 
@@ -209,20 +225,22 @@ function sendBase64Data(data, filename, filetype) {
  * @param {String} image_name 
  * @returns 
  */
-function fileContainer(image_src, image_name) {
+function fileContainer(image_src, image_name, upload = true) {
     var file_container = document.createElement('div')
-    file_container.id = image_name;
+    file_container.id = upload ? "upload-" + image_name : image_name;
     file_container.classList.add('file-container');
     
     var img = document.createElement('div');
     img.classList.add('img');
     img.style.backgroundImage = `url(${image_src})`;
 
-    var remove_button = document.createElement('span');
-    remove_button.classList.add('remove-button');
-    remove_button.onclick = function() { removeFile(image_name); };
-
-    file_container.appendChild(remove_button);
+    if (upload) {
+        var remove_button = document.createElement('span');
+        remove_button.classList.add('remove-button');
+        remove_button.onclick = function() { removeFile(image_name); };
+    
+        file_container.appendChild(remove_button);
+    }
     file_container.appendChild(img);
     
     return file_container
@@ -282,7 +300,7 @@ function uploadImage(image) {
  * @param {String} filename 
  */
 function removeFile(filename) {
-    document.getElementById(filename).remove();
+    document.getElementById("upload-" + filename).remove();
     files_size -= filesData[filename].size;
     delete filesData[filename];
     if (Object.keys(filesData).length == 0) {
@@ -299,6 +317,7 @@ function message_submit() {
     var text = text_input.innerText;
 
     text_input.innerText = ''; //Clear text input
+    image_input.value = ''; //Clear images input
 
     input = false
     promisedEmit('message', { text: text });
@@ -359,87 +378,167 @@ text_input.addEventListener('keydown', function(event) {
 
 /* Loads raw html chat */
 socket.on('load-chat', (html_data_path) => {
-    loadChat(html_data_path)
+    loadChat(html_data_path);
 });
 
 socket.on('change-model', (model_name) => {
     changeModel(model_name);
 });
 
-
-/* For CLIENT message handling */
-socket.on('client-message', (data) => {
-
-    /**
-     * constructs an html elment with clients message content
-     * @param {String} message 
-     * @param {Number} count 
-     * @returns {Node}
-     */
-    function client_message_construct(message, index) {
-        var client_message = client_message_common.cloneNode(true);
-        client_message.hidden = false;
-        client_message.id = 'cm' + index; // cm{index} - client_message_{index}
+if (appName == 'chatbot') {
+    /* For CLIENT message handling */
+    socket.on('client-message', (data) => {
+    
+        /**
+         * constructs an html elment with clients message content
+         * @param {String} message 
+         * @param {Number} count 
+         * @returns {Node}
+         */
+        function client_message_construct(message, index) {
+            var client_message = client_message_common.cloneNode(true);
+            client_message.hidden = false;
+            client_message.id = 'cm' + index; // cm{index} - client_message_{index}
+            
+            var text_container = client_message.querySelector('.text-container');
+            text_container.innerHTML = message;
+            
+            if (Object.keys(filesData).length != 0) {
+                for (const filename in filesData) {
+                    var files_container = client_message.querySelector('.files-container');
+                    files_container.hidden = false;
+    
+                    const file_container = fileContainer(filesData[filename].src, filename, removable = false)
+    
+                    files_container.appendChild(file_container);
+                }
+                filesData = {};
+                input_files_container.hidden = true;
+                input_files_container.innerHTML = '';
+            }
+    
+            return client_message;
+        }
         
-        var text_container = client_message.querySelector('.text-container');
+        const message = data.message;
+        const index = data.index;
+    
+        const client_message = client_message_construct(message, index);
+        messages.appendChild(client_message);
+        updateChat(client_message.outerHTML)
+    });
+    /* SERVER message responding animation */
+    socket.on('server-responding', () => {
+        var server_responding = server_message_common.cloneNode(true);
+        server_responding.id = '';
+        server_responding.hidden = false;
+    
+        messages.appendChild(server_responding);
+        scrollToBottom(messages_container);
+    });
+    /* For SERVER message handling */
+    socket.on('server-message', (data) => {
+        const message = data.response;
+        const index = data.index;
+    
+        let server_messages = document.getElementsByClassName('server-message');
+        let server_message = server_messages[server_messages.length - 1];
+    
+        server_message.id = 'sm' + index; // sm{index} - server_message_{index}'
+    
+        var typing = document.querySelectorAll(".typing")[1];
+        typing.remove();
+    
+        var text_container = server_message.querySelector('.text-container');
         text_container.innerHTML = message;
         
-        if (Object.keys(filesData).length != 0) {
-            for (const filename in filesData) {
-                var files_container = client_message.querySelector('.files-container');
-                files_container.hidden = false;
-
-                const file_container = fileContainer(filesData[filename].src, filename)
-
-                files_container.appendChild(file_container);
+        updateChat(server_message.outerHTML)
+    });
+}
+else if (appName == 'webuilder') {
+    /* For CLIENT message handling */
+    socket.on('client-message', (data) => {
+    
+        /**
+         * constructs an html elment with clients message content
+         * @param {String} message 
+         * @param {Number} count 
+         * @returns {Node}
+         */
+        function client_message_construct(message, index) {
+            var client_message = client_message_common.cloneNode(true);
+            client_message.hidden = false;
+            client_message.id = 'cm' + index; // cm{index} - client_message_{index}
+            
+            var text_container = client_message.querySelector('.text-container');
+            text_container.innerHTML = message;
+            
+            if (Object.keys(filesData).length != 0) {
+                for (const filename in filesData) {
+                    var files_container = client_message.querySelector('.files-container');
+                    files_container.hidden = false;
+    
+                    const file_container = fileContainer(filesData[filename].src, filename, removable = false)
+    
+                    files_container.appendChild(file_container);
+                }
+                filesData = {};
+                input_files_container.hidden = true;
+                input_files_container.innerHTML = '';
             }
-            filesData = {};
-            input_files_container.hidden = true;
-            input_files_container.innerHTML = '';
+    
+            return client_message;
+        }
+        
+        const message = data.message;
+        const index = data.index;
+    
+        const client_message = client_message_construct(message, index);
+        messages.appendChild(client_message);
+    });
+    /* SERVER message responding animation */
+    socket.on('server-responding', () => {
+        // var server_responding = server_message_common.cloneNode(true);
+        // server_responding.id = '';
+        // server_responding.hidden = false;
+    
+        // messages.appendChild(server_responding);
+        // scrollToBottom(messages_container);
+    });
+    /* For SERVER message handling */
+    socket.on('server-message', (data) => {
+        // webview = document.getElementById('webview');
+        const message = data.response;
+        var webview = document.getElementById('webview');
+        var code_container = document.getElementById('code-container');
+
+        server_message = document.createElement('div');
+        server_message.innerHTML = message;
+
+        if (message.includes("<pre>")) {
+            const html_code = server_message.querySelector('pre').innerText.replace('HTML', '');
+            console.log(html_code);
+            code_container.innerHTML = message;
+            
+            webview.srcdoc = html_code;
+            // welcoming_message.style.display = 'none';
+            webview.classList.add('active');
         }
 
-        return client_message;
-    }
-    
-    const message = data.message;
-    const index = data.index;
+        else if (message.includes("EMPTY")) {
+            errorAlert("Try again, Bad Request", 400);
+        }
 
-    const client_message = client_message_construct(message, index);
-    messages.appendChild(client_message);
-    updateChat(client_message.outerHTML)
-});
-/* SERVER message typing(thinking) animation */
-socket.on('server-typing', () => {
-    var server_responding = server_message_common.cloneNode(true);
-    server_responding.id = '';
-    server_responding.hidden = false;
+        else {
+            errorAlert("Invalid server response, try again or change model, Internal Server Error", 500);
+        }
 
-    messages.appendChild(server_responding);
-    scrollToBottom(messages_container);
-});
-/* For SERVER message handling */
-socket.on('server-message', (data) => {
-    const message = data.response;
-    const index = data.index;
-
-    let server_messages = document.getElementsByClassName('server-message');
-    let server_message = server_messages[server_messages.length - 1];
-
-    server_message.id = 'sm' + index; // sm{index} - server_message_{index}'
-
-    var typing = server_message.querySelector(".typing");
-    server_message.removeChild(typing);
-
-    var text_container = server_message.querySelector('.text-container');
-    text_container.innerHTML = message;
-    
-    updateChat(server_message.outerHTML)
-});
-
-
+        updateChat(messages.innerHTML);
+    });
+}
 
 socket.on('connect', () => {
-    promisedEmit('start_chat');
+    promisedEmit('start_chat', defaultData);
 });
 
 socket.on('disconnect', () => {

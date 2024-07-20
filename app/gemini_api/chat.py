@@ -24,7 +24,7 @@ error_code_map = {
 }
 
 
-def list_model_names(name_filter=''):
+def list_model_names(name_filters=None):
     """
     Lists all available models names
     """
@@ -32,19 +32,30 @@ def list_model_names(name_filter=''):
         model.name.replace('models/', '')
         for model in genai.list_models()
             if 'generateContent' in model.supported_generation_methods
-            and name_filter in model.name
     ]
+
+    def by_name(model_name):
+        if name_filters:
+            for name_filter in name_filters:
+                if not (('-' not in name_filter and name_filter in model_name)
+                    or ('-' in name_filter and name_filter.replace('-', '') not in model_name)):
+                    return False
+        return True
+
+    model_names = [model_name for model_name in filter(by_name, model_names)]
+
     return model_names
 
-DEFAULT_MODEL = list_model_names('latest').pop()
+
+DEFAULT_MODEL = list_model_names(['latest']).pop()
 
 
-def create_chat(model_name=DEFAULT_MODEL, history=None):
+def create_chat(model_name=DEFAULT_MODEL, history=None, system_instruction=None):
     """
     cretaes a chat with the specified model
     defaults to DEFAULT_MODEL
     """
-    model = genai.GenerativeModel(model_name)
+    model = genai.GenerativeModel(model_name=model_name, system_instruction=system_instruction)
     chat = model.start_chat(history=history)
     return chat
 
@@ -93,7 +104,7 @@ def get_response(chat, text, images=None, stream=False):
 
         return error, chat
 
-    except (BrokenResponseError, BlockedPromptException, StopCandidateException, IncompleteIterationError) as e:
+    except (BrokenResponseError, BlockedPromptException, StopCandidateException, IncompleteIterationError, IndexError) as e:
         print(f"Error: {e}")
         if len(chat.history) > 0:
             last_send, last_received = chat.rewind()
@@ -141,6 +152,50 @@ def get_chat_name(chat):
 
         return chat_name
     return "blank"
+
+
+# custom chats
+def create_webuilder(model_name=DEFAULT_MODEL, history=None):
+    """
+    creates a webuilder chat
+    """
+    webuilder_instructions = """\
+        1. In your responses include HTML code only.
+        2. The code block must contain HTML, CSS, JS structure of user's request.
+        3. Make the structure as complex and accurate as you can.
+        4. Instead of images use emojis.
+        5. No example or external links should be on the website.
+        6. Must add your prefered colors for the website: body background and text colors.
+
+        Remember: Your goal is to be as accurate and complex as possible while adhering to these instructions.  Focus on providing complete and functional HTML code blocks for the user's requests.
+        IMPORTANT: If user's request will seem impossible or unfamiliar for a website, return 'EMPTY'.
+
+        expected html message:
+        <html>
+            <head>
+                <title>...</title>
+                <style>...</style>
+                <script>...</script>
+            </head>
+            <body>
+                ...
+            </body>
+        </html>
+    """
+
+    webuilder_instructions = """\
+    if request seems like a website:
+        return From request build HTML5 website;
+    else:
+        return 'EMPTY'
+    """
+
+    chat = create_chat(
+        model_name=model_name,
+        history=history,
+        system_instruction=webuilder_instructions
+    )
+    return chat
 
 
 

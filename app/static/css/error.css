@@ -13,9 +13,9 @@ body * {
   height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-size: calc(4rem + 6vw);
-  font-weight: 800 !important;
+h1 {
+  font-size: calc(4rem + 6vw) !important;
+  font-weight: bolder !important;
   margin: 0;
 }
 

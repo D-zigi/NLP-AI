@@ -1,94 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/webuilder.css') }}">
-    
-    <title>WeBuilder</title>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/gemini_sparkle.svg') }}">
-</head>
-<body>
-    <header>
-        <div id="selected-model" onmousedown="Menu(this, 'models')">
-            {% include '/svgs/gemini_sparkle.svg' %}
-            <h6 id="model-name" class="model-name">{{ default_model }}</h6>
-        </div>
-        <div class="header-buttons">
-            <div title="clear chat" id="clear-chat" class="header-btn" onclick="clearChat()">
-                {% include '/svgs/clear.svg' %}
-            </div>
-            <div title="download chat" id="download-chat" class="header-btn" onclick="downloadChat()">
-                {% include '/svgs/download.svg' %}
-            </div>
-            <div title="theme switch" id="theme-switcher" class="header-btn" onclick="changeTheme()">
-                {% include '/svgs/bulb.svg' %}
-            </div>
-        </div>
-    </header>
-
-    <!-- common absolute elements -->
-    <div>
-        <div id="models" class="hidden">
-            {% for model in models%}
-                <p id="{{ model }}" class="model" onmousedown="changeModel(this.id); Menu(this, 'models')">
-                    {% include '/svgs/gemini_sparkle.svg' %}{{ model }}
-                </p>
-            {% endfor %}
-        </div>
-    
-        <svg class="mask">
-            <mask id="gemini-sparkle-mask-chat" class="gemini-sparkle-mask">
-                {% include '/svgs/gemini_sparkle.svg' %}
-            </mask>
-        </svg>
+<div id="webuilder-container" class="webuilder-container messages-container">
+            
+    <div id="welcoming">
         
-        <div class="gemini-sparkle"></div>
-    </div>
-    <!-- common absolute elements -->
+        <div class="title">
+            <h1>Welcome to <span class="gemini-gradient-text">GeminiAPI</span>-based
+                <br>Web-Builder{% include '/svgs/gemini_sparkle.svg' %}
+            </h1>
+        </div>
 
-    <div id="chat_container" class="chat_container">
-
-        <div id="webuilder-container" class="webuilder-container messages-container">
+        <div class="options">
             
-            <div id="welcoming">
-                
-                <div class="title">
-                    <h1>Welcome to <span class="gemini-gradient-text">GeminiAPI</span>-based</h1>
-                    <h1>Web-Builder</h1>
-                </div>
+            <input type="file" id="logs-input" hidden>
+            <label id="logs" for="logs-input" class="option">
+                {% include '/svgs/logs.svg' %}
+                <span>
+                    Continue saved Gemini conversation?
+                </span>
+            </label>
 
-            </div>
-
-            <iframe id="webview" class="webview" title="webview" hidden></iframe>
+            <a id="chatbot" href="chatbot" class="option">
+                {% include '/svgs/txt.svg' %}
+                <span>
+                    check out Gemini chatbot
+                </span>
+            </a>
 
         </div>
 
-        <div class="prompt-container">
-            <div id="input-files-container" class="files-container" hidden></div>
-            
-            <div id="prompt" class="prompt">
-                
-                <input type="file" id="image-input" hidden multiple>
-                <label for="image-input" class="image-input">
-                    {% include '/svgs/image_upload.svg' %}
-                </label>
+    </div>
 
-                <span title="send message" id="text-input" class="text-input" type="text" role="textbox" contenteditable="plaintext-only"></span>
-
-                <div id="submit" class="submit disabled">
-                    {% include '/svgs/send_message.svg' %}
-                </div>
-            
-            </div>
-            <span>Gemini can not understand unclear requests correctly. Write accurate requests.</span>
+    <div id="messages" class="messages">
+        <div id="server-response" class="server-response">
+            <iframe id="webview" class="webview glass" title="webview" referrerpolicy="no-referrer"></iframe>
+            <div id="code-container" class="code-container hidden"></div>
         </div>
     </div>
-</body>
-<script src="{{ url_for('static', filename='js/functions.js') }}"></script>
-<script src="{{ url_for('static', filename='js/webuilder.js') }}"></script>
-</html>
+
+</div>

@@ -6,16 +6,16 @@ from .buckets import Bucket
 db = firestore.client()
 bucket = Bucket()
 
-TMP_PATH = os.getenv('TMP_PATH')
+TMP_PATH = os.environ['TMP_PATH']
 
-chat_rooms = db.collection('chat-rooms')
-
-class ChatRoom:
-    """chat room model of 'chat-rooms' collection"""
-    def __init__(self, ip):
+class AppRoom:
+    """app room model of '<app_name>-rooms' collection"""
+    def __init__(self, ip, app_name):
         self.ip = ip
-        self.data_url = f"chat-rooms/{ip}.pkl"
-        self.local_data_path = f"{TMP_PATH}/chat-rooms/{ip}.pkl"
+        self.app_name = app_name
+        self.app_rooms = db.collection(f"{app_name}-rooms")
+        self.data_url = f"{app_name}-rooms/{ip}.pkl"
+        self.local_data_path = f"{TMP_PATH}/{app_name}-rooms/{ip}.pkl"
 
     def to_dict(self):
         """
@@ -30,20 +30,20 @@ class ChatRoom:
         """
         check if self object exists in firebase
         """
-        exists_flag = chat_rooms.document(self.ip).get().exists
+        exists_flag = self.app_rooms.document(self.ip).get().exists
         return exists_flag
 
     def save(self):
         """
         upload self object to firebase
         """
-        chat_rooms.document(self.ip).set(self.to_dict())
+        self.app_rooms.document(self.ip).set(self.to_dict())
 
     def delete(self):
         """
         delete self object from firebase
         """
-        chat_rooms.document(self.ip).delete()
+        self.app_rooms.document(self.ip).delete()
 
     def download_data(self):
         """
