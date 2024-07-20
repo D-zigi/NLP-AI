@@ -14,6 +14,14 @@ This part of the project contains the client-side JavaScript code for interactin
 * **Chat History Management:** Allows users to load and save chat histories, preserving their interactions for future reference.
 * **Error Handling:** Implements robust error handling mechanisms to gracefully manage potential issues during communication with the Gemini API.
 
+## Apps
+
+### Gemini chatbot
+    This app provides a basic chat interface for interacting with the Gemini API. Users can type messages and receive responses from the Gemini model.
+
+### Gemini web builder
+    This app allows users to build simple websites using the Gemini API. Users can provide text descriptions of their desired website, and the Gemini API will generate the HTML code.
+
 # own NLP model:
 
 Not implemented yet.
@@ -31,7 +39,7 @@ FIREBASE_CREDENTIALS='firebase.json'
 TMP_PATH='app/static/tmp'
 ```
 2. **Add Firebase:** You need a Firebase database and storage for auto-saving chats for users. Create Firebase for your project and download its secret key. [Firebase](https://firebase.google.com/).
-Your Firebase secret key json keys should look like firebase template.json:
+Your Firebase secret key json keys should look like firebase firebase template.json:
 ```json
 {
   "type": "",
