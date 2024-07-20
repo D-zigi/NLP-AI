@@ -396,8 +396,10 @@ def download_chat():
 
     chat = room.chat
 
-    data_path = room.data_path.replace('app/', '')
+    data_path = room.data_path.replace('app', '')
     chat_name = get_chat_name(chat)
+
+    print(data_path, chat_name)
 
     return data_path, chat_name
 
