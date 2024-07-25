@@ -8,9 +8,11 @@ $header_height: $prompt_full_height;
 
 :root {
     --chat_width: #{$chat_width};
+    --menu-tint: 30%;
 }
 
 .light-theme {
+    --menu-tint: 0%;
     #theme-switcher svg {
         path:nth-child(3) {
             fill: var(--primary-color) !important;
@@ -23,7 +25,7 @@ $header_height: $prompt_full_height;
 
 #models{
     position: absolute;
-    @include glass;
+    @include glass($tint: var(--menu-tint));
     @include vendor-prefix(width, fit-content);
     padding: var(--small_margin);
     z-index: 10;
@@ -182,8 +184,8 @@ header {
 div.gemini-sparkle {
     @include gemini_gradient();
     @include gradient_animation(4s, $count: infinite);
-    -webkit-mask: url('#gemini-sparkle-mask-chat');
-    mask: url('#gemini-sparkle-mask-chat');
+    -webkit-mask: url('#gemini-sparkle-chat-mask');
+    mask: url('#gemini-sparkle-chat-mask');
     width: 100px;
     height: 100px;
     position: fixed;
@@ -334,26 +336,67 @@ div.gemini-sparkle {
     display: flex;
     justify-content: center;
     height: auto;
+
+    .code-webview-switcher {
+        @include glass();
+        padding: var(--small_margin);
+        position: fixed;
+        bottom: calc($prompt_full_height + var(--small_margin) * 2);
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        background-color: black;
+        color: white;
+        font-family: 'Courier New', Courier, monospace !important;
+        z-index: 5;
+        transition: all var(--transition_time);
+
+        &::after {
+            content: "show code";
+        }
+
+        &.active {
+            &::after {
+                content: "hide code";
+            }
+            filter: invert(100%);
+            &:active {
+                filter: invert(100%) brightness(50%);
+            }
+        }
+
+        &:active {
+            filter: brightness(50%);
+        }
+    }
     
     .webview {
         width: 30%;
         aspect-ratio: 1 / 1;
         transition: all 1s;
         max-height: calc(100vh - 2 * $prompt_full_height - 2 * var(--small_margin));
-
-        &.active {
-            background-color: white;
-            width: 100%;
-        }
     }
 
     .code-container {
         width: 100%;
         height: 100%;
     }
+
+    &.active {
+
+        .code-webview-switcher {
+            display: block;
+        }
+
+        .webview {
+            background-color: white;
+            width: 100%;
+        }
+
+    }
 }
 
-.messages-container {
+.main {
     width: 100%;
     height: calc(100% - $prompt_full_height);
     padding: 0 calc((100vw - var(--chat_width)) / 2);
@@ -365,8 +408,7 @@ div.gemini-sparkle {
         word-wrap: break-word;
     }
 
-
-    .messages {
+    .messages-container {
         padding: calc(var(--small_margin) * 2) 0;
         display: flex;
         flex-direction: column;
@@ -485,6 +527,7 @@ div.gemini-sparkle {
         min-height: $prompt_height;
         height: auto;
         display: flex;
+        align-items: flex-end;
         flex-direction: row;
         padding: var(--small_margin);
 

@@ -1,15 +1,20 @@
-<div id="webuilder-container" class="webuilder-container messages-container">
-            
+<!-- Web-Builder template -->
+<div id="main" class="webuilder main">
+    
+    <!-- Welcoming section -->
     <div id="welcoming">
         
+        <!-- Welcome Title -->
         <div class="title">
             <h1>Welcome to <span class="gemini-gradient-text">GeminiAPI</span>-based
                 <br>Web-Builder{% include '/svgs/gemini_sparkle.svg' %}
             </h1>
         </div>
 
+        <!-- Options for the Webpage -->
         <div class="options">
             
+            <!-- Logs input -->
             <input type="file" id="logs-input" hidden>
             <label id="logs" for="logs-input" class="option">
                 {% include '/svgs/logs.svg' %}
@@ -18,6 +23,7 @@
                 </span>
             </label>
 
+            <!-- Chatbot webpage -->
             <a id="chatbot" href="chatbot" class="option">
                 {% include '/svgs/txt.svg' %}
                 <span>
@@ -29,10 +35,12 @@
 
     </div>
 
-    <div id="messages" class="messages">
+    <!-- Messages container -->
+    <div id="messages" class="messages-container">
         <div id="server-response" class="server-response">
             <iframe id="webview" class="webview glass" title="webview" referrerpolicy="no-referrer"></iframe>
             <div id="code-container" class="code-container hidden"></div>
+            <span class="code-webview-switcher" onclick="codeWebviewSwitcher(this, 'webview', 'code-container')"></span>
         </div>
     </div>
 

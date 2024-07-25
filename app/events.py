@@ -109,7 +109,7 @@ def save_html_data(client_ip, app_name, data=''):
     room = rooms.get_user_room(client_ip, app_name)
     html_data_path = room.html_data_path
     with open(html_data_path, encoding="utf-8", mode='w') as file:
-        file.write(data)
+        file.write(remove_html_duplicates(data))
 
 def update_html_data(client_ip, app_name, data=''):
     """
@@ -201,7 +201,7 @@ class UserRoom:
         self.app_room = AppRoom(ip, app_name)
 
         self.data_path = self.app_room.local_data_path
-        self.html_data_path = self.app_room.local_data_path.replace('.pkl','_html_data.html')
+        self.html_data_path = self.app_room.local_data_path.replace('.pkl','.html')
         self.uploaded_files = {}
 
         if app_name == 'chatbot':

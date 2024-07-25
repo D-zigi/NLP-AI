@@ -9,16 +9,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/geminiapi.css') }}">
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    
+
     <title>GeminiAPI</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/gemini_sparkle.svg') }}">
 </head>
 <body>
     <header>
+        <!-- Selected AI model - 'select' button -->
         <div id="selected-model" onmousedown="Menu(this, 'models')">
             {% include '/svgs/gemini_sparkle.svg' %}
             <h6 id="model-name" class="model-name">{{ default_model }}</h6>
         </div>
+
+        <!-- Header buttons -->
         <div class="header-buttons">
             <div title="clear chat" id="clear-chat" class="header-btn" onclick="clearChat()">
                 {% include '/svgs/clear.svg' %}
@@ -30,10 +33,12 @@
                 {% include '/svgs/bulb.svg' %}
             </div>
         </div>
+
     </header>
 
     <!-- common absolute elements -->
     <div>
+        <!-- AI Models menu -->
         <div id="models" class="hidden">
             {% for model in models%}
                 <p id="{{ model }}" class="model" onmousedown="changeModel(this.id); Menu(document.getElementById('selected-model'), 'models')">
@@ -42,14 +47,22 @@
             {% endfor %}
         </div>
     
+
+        <!-- Gemini sparkle mask -->
         <svg class="mask">
-            <mask id="gemini-sparkle-mask-chat" class="gemini-sparkle-mask">
+            <mask id="gemini-sparkle-chat-mask" class="gemini-sparkle-chat-mask">
                 {% include '/svgs/gemini_sparkle.svg' %}
             </mask>
         </svg>
         
+        <!-- Gemini sparkle background -->
         <div class="gemini-sparkle"></div>
-    
+        
+        <!-- CopyToClipboard svg -->
+        <div hidden>{% include '/svgs/copy.svg' %}</div>
+        
+        
+        <!-- Server Message template -->
         <div id="server_message_common" class="server-message message" hidden>
             <img class="gemini-sparkle" src="{{ url_for('static', filename='images/gemini_sparkle.svg') }}" alt="gemini">
             <div class="text-container">
@@ -61,13 +74,14 @@
             </div>
         </div>
 
+        <!-- Client Message template -->
         <div id="client_message_common" class="client-message message" hidden>
             <div class="text-container"></div>
             <div class="files-container" hidden></div>
-            <div class="editable-hint"></div>
+            <div class="editable-hint" hidden></div>
         </div>
     </div>
-    <!-- common absolute elements -->
+    <!-- /common absolute elements -->
 
     <div id="chat_container" class="chat_container">
 
@@ -78,27 +92,38 @@
         {% endif %}
 
         <div class="prompt-container">
-            <div id="input-files-container" class="files-container" hidden></div>
+
+            <!-- Files container -->
+            <div id="prompt-files-container" class="files-container" hidden></div>
             
+            <!-- Prompt -->
             <div id="prompt" class="prompt">
                 
+
+                <!-- Image input -->
                 <input type="file" id="image-input" hidden multiple>
                 <label for="image-input" class="image-input">
                     {% include '/svgs/image_upload.svg' %}
                 </label>
 
+                <!-- Text input -->
                 <span title="send message" id="text-input" class="text-input" type="text" role="textbox" contenteditable="plaintext-only"></span>
 
+
+                <!-- Submit button -->
                 <div id="submit" class="submit disabled">
                     {% include '/svgs/send_message.svg' %}
                 </div>
             
             </div>
+
+            <!-- comment -->
             <span>Gemini can make mistakes. Check important info.</span>
         </div>
     </div>
 </body>
 <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/classes.js') }}"></script>
 <script src="{{ url_for('static', filename='js/geminiapi.js') }}"></script>
 <script src="{{ url_for('static', filename='js/geminiapi_socket.js') }}"></script>
 </html>

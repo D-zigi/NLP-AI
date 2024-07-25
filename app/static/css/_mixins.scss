@@ -70,9 +70,9 @@
     }
 }
 
-@mixin glass($border-radius: 20px, $color:rgb(255, 255, 255)) {
+@mixin glass($border-radius: 20px, $color:rgb(255, 255, 255), $tint: 0%) {
     background: linear-gradient(135deg, rgba($color, 0.1), rgba($color, 0));
-    @include vendor-prefix(backdrop-filter, blur(10px));
+    @include vendor-prefix(backdrop-filter, (blur(10px) brightness(calc(100% - $tint))));
     border-radius: $border-radius;
     border:1px solid rgba($color, 0.18);
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.37);

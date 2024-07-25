@@ -66,35 +66,40 @@ def get_lexer(code):
     Gets the lexer of the written code block
     defaults to python if no language is specified.
     """
-    default_lang = 'python'
+    default_lang = 'bash'
     langs = [code.split('\n')[0], code.split(' ')[0]]
 
     lexer_names = [name.lower() for name, _, _, _ in list(get_all_lexers())]
     for lang in langs:
         if lang.lower() in lexer_names:
-            return get_lexer_by_name(lang)
+            return get_lexer_by_name(lang), True
 
-    return get_lexer_by_name(default_lang)
+    return get_lexer_by_name(default_lang), False
 
 def format_code(code):
     """
     Highlight the code using Pygments 
     and return it as HTML
     """
-    lexer = get_lexer(code)
+    lexer, replace = get_lexer(code)
     lang = lexer.name
 
-    title_index = code.lower().find(lang.lower())
-    title = code[title_index:title_index + len(lang)]
-    code = code.replace(title, '', 1)
+    if replace:
+        title_index = code.lower().find(lang.lower())
+        title = code[title_index:title_index + len(lang)]
+        code = code.replace(title, '', 1)
 
     formatter = HtmlFormatter(style='monokai', full=True, linenos=False)
     highlighted_code = highlight(code, lexer, formatter)
 
-    #add class for pre, for css better formatting
     formatted_code = highlighted_code.replace(
-        '<pre>', 
-        f'<pre><div class="code-header"><span class="lang">{lang}</span></div>'
+        '<pre>',
+        f'<pre><div class="code-header"><span class="lang">{lang}</span></div><div class="code">'
+    )
+
+    formatted_code = formatted_code.replace(
+        '</pre>',
+        '</div></pre>'
     )
 
     return formatted_code
@@ -115,16 +120,18 @@ def html_format(text):
 
     index = 0
     while code_indexes:
-        start = code_indexes.pop(0) + 3
-        end = code_indexes.pop(0) if code_indexes else len(text)
 
-        text_block = text[index:start]
-        code_block = text[start:end]
+        code_start = code_indexes.pop(0) + 3
+        code_end = code_indexes.pop(0) if code_indexes else len(text)
 
-        formatted.append(format_text(text_block))
+        if code_start-3 > index:
+            text_block = text[index:code_start]
+            formatted.append(format_text(text_block))
+
+        code_block = text[code_start:code_end]
         formatted.append(format_code(code_block))
 
-        index = end
+        index = code_end + 3
 
     formatted.append(format_text(text[index:]))
 

@@ -44,20 +44,60 @@ body {
     $elements_padding: calc(var(--small_margin) * 2);
     pre{
         background-color: black;
-        padding: $elements_padding;
-        padding-top: 0;
-        margin-top: 0;
         border-radius: var(--border_radius);
         
         .code-header {
             background-color: var(--prompt-color);
-            width: calc(100% + 2 * $elements_padding);
-            margin-left: calc($elements_padding * (-1));
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--small_margin);
+            height: auto;
             padding: calc(0.5 * $elements_padding) $elements_padding;
             border-radius: var(--border_radius) var(--border_radius) 0 0;
-            margin-bottom: $elements_padding;
-            font-size: var(--p);
             box-shadow: 0 -2px 0 0 var(--prompt-color);
+            
+            .lang {
+                font-size: var(--p);
+            }
+
+            .copy {
+                display: flex;
+                align-items: center;
+                gap: var(--small_margin);
+                
+                cursor: pointer;
+                height: var(--smaller_length);
+                @include vendor-prefix(width, fit-content);
+                @include vendor-prefix(user-select, none);
+
+                svg {
+                    height: calc(0.5 * var(--small_length));
+                    width: auto;
+                    fill: var(--text-color);
+                }
+
+                &::after {
+                    align-self: center;
+                    content: "copy";
+                }
+
+                &.active{
+                    &::after {
+                        content: "✓ copied";
+                    }
+                    svg {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .code {
+            padding: calc(var(--small_margin) * 2);
+            color: white;
         }
     }
     

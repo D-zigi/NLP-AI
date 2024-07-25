@@ -9,21 +9,28 @@ var socket = io('/geminiapi', {
 });
 
 /* HTML Elements used for socket */
+var selected_model_name = document.getElementById('model-name');
+
+var main = document.getElementById('main');
+
+var welcoming_message = document.getElementById('welcoming');
 var logs_input = document.getElementById('logs-input');
 
-var text_input = document.getElementById('text-input')
+var messages = document.getElementById('messages');
+var server_message_common = document.getElementById('server_message_common');
+var client_message_common = document.getElementById('client_message_common');
+
+var prompt_files_container = document.getElementById('prompt-files-container');
+var text_input = document.getElementById('text-input');
 var image_input = document.getElementById('image-input');
 var submit = document.getElementById('submit');
 
-var input_files_container = document.getElementById('input-files-container');
 
-var selected_model_name = document.getElementById('model-name');
+/* Default values */
+const image_supported = [".png", ".jpg", ".jpeg", ".webp", ".heif", ".heic"];
+const logs_supported = [".pkl"];
+const max_size = 1000000/* =1GB */ * 10;//In bytes
 
-var messages_container = document.getElementById('messages-container')
-var messages = document.getElementById('messages')
-var server_message_common = document.getElementById('server_message_common')
-var client_message_common = document.getElementById('client_message_common')
-var welcoming_message = document.getElementById('welcoming')
 
 if (appName == 'chatbot') {
     var defaultData = '';
@@ -35,24 +42,18 @@ else if(appName == 'webuilder') {
     var defaultData = server_response.outerHTML;
 }
 
-const image_supported = [".png", ".jpg", ".jpeg", ".webp", ".heif", ".heic"]
-const logs_supported = [".pkl"]
-
 image_input.accept = image_supported.join(',');
 logs_input.accept = logs_supported.join(',');
 
-var filesData = {};
-var files_size = 0;
-const max_size = 1000000 * 10; // in bytes
+var uploadedFiles = new files();
 
 var html_data_path = null;
 
 var model = selected_model_name.innerText; //Gets default model name from HTML
-document.getElementById(model).classList.add("selected");
+document.getElementById(model).classList.add("selected"); //Mark selected model in model selection menu
 
 var promise = false; // response/other promises that require waiting before sending response 
-var input = false; // input acceptance (whitespace only - false)
-
+var input = false; // user input acceptance
 
 /**
  * call emit with promise waiting
@@ -76,7 +77,7 @@ function promisedEmit(event, data = null) {
             })
         }
     } catch(err) {
-        console.log(err)
+        console.error(err)
 
         promise = false
         submit_switch()
@@ -89,7 +90,7 @@ function promisedEmit(event, data = null) {
 */
 function changeModel(model_name) {
     old_model = model;
-    model = model_name
+    model = model_name;
     if (old_model != model) {
         document.getElementById(old_model).classList.remove("selected");
         document.getElementById(model).classList.add("selected");
@@ -98,6 +99,7 @@ function changeModel(model_name) {
         promisedEmit('change_chat_model', { model_name: model });
     }
 }
+
 
 /**
  * sends html_data for update chat data on server side
@@ -144,7 +146,7 @@ function loadChat(html_data_path, attempts = 0) {
         }
         
         messages.innerHTML = text;
-        scrollToBottom(messages_container);
+        scrollToBottom(main);
     })
     .catch(
         error => console.error('Error fetching the file:', error)
@@ -219,6 +221,7 @@ function sendBase64Data(data, filename, filetype) {
     socket.emit('base64_load_end', {filename: filename});
 }
 
+
 /**
  * creates file container of the attached file
  * @param {String} image_src 
@@ -253,9 +256,8 @@ function fileContainer(image_src, image_name, upload = true) {
  * @param {File} image 
  */
 function uploadImage(image) {
-    const max_image_size = max_size
+    const max_image_size = max_size;
     const reader = new FileReader();
-    let imageData = {};
     
     reader.onload = function(event) {
 
@@ -269,25 +271,22 @@ function uploadImage(image) {
             errorAlert(error, 413);
         }
 
-        else if(files_size + image.size > max_size) { // If file limit is exceeded
+        else if(uploadedFiles.size() + image.size > max_size) { // If file limit is exceeded
             const error = "File limit exceeded";
             errorAlert(error, 413);
         }
 
         else {  // If OK
+            var imageData = {};
             imageData.type = image.type;
             imageData.size = image.size;
             imageData.src = event.target.result;
 
-            filesData[image.name] = imageData;
+            uploadedFiles.add(image.name, imageData);
 
             const file_container = fileContainer(imageData.src, image.name)
-
-            input_files_container.appendChild(file_container);
-            
-            input_files_container.hidden = false;
-
-            files_size += image.size;
+            prompt_files_container.appendChild(file_container);
+            prompt_files_container.hidden = false;
 
             sendBase64Data(event.target.result.split(',')[1], image.name, image.type);
         }
@@ -301,10 +300,9 @@ function uploadImage(image) {
  */
 function removeFile(filename) {
     document.getElementById("upload-" + filename).remove();
-    files_size -= filesData[filename].size;
-    delete filesData[filename];
-    if (Object.keys(filesData).length == 0) {
-        input_files_container.hidden = true;
+    uploadedFiles.remove(filename);
+    if (uploadedFiles.empty()) {
+        prompt_files_container.hidden = true;
     }
     socket.emit('remove_file', filename);
 };
@@ -385,47 +383,68 @@ socket.on('change-model', (model_name) => {
     changeModel(model_name);
 });
 
+/**
+ * adds copy button to code blocks
+ */
+function addCopyCode(element) {
+    element.querySelectorAll('pre').forEach(function(code_block) {
+        var code_header = code_block.getElementsByClassName('code-header')[0];
+
+        if (!code_header.querySelector(".copy")) {
+            var copy = document.createElement('div');
+            copy.classList.add("copy");
+            copy_icon = document.querySelector(".copy-icon").cloneNode(true);
+            copy.appendChild(copy_icon);
+            copy.setAttribute('onclick', `copyToClipboard(this, this.parentElement.parentElement.getElementsByClassName('code')[0])`);
+    
+            code_header.appendChild(copy);
+        }
+    });
+}
+
+/**
+* constructs an html elment with clients message content
+* @param {String} message 
+* @param {Number} count 
+* @returns {Node}
+*/
+function client_message_construct(message, index) {
+    var client_message = client_message_common.cloneNode(true);
+    client_message.hidden = false;
+    client_message.id = 'cm' + index; // cm{index} - client_message_{index}
+    
+    var text_container = client_message.querySelector('.text-container');
+    text_container.innerHTML = message;
+    
+    if (!uploadedFiles.empty()) {
+        for (const filename in uploadedFiles.getall()) {
+            var files_container = client_message.querySelector('.files-container');
+            files_container.hidden = false;
+
+            const file_container = fileContainer(uploadedFiles.get(filename).src, filename, removable = false);
+
+            files_container.appendChild(file_container);
+        }
+        uploadedFiles.clear();
+        prompt_files_container.hidden = true;
+        prompt_files_container.innerHTML = '';
+    }
+
+    return client_message;
+}
+
+
 if (appName == 'chatbot') {
     /* For CLIENT message handling */
     socket.on('client-message', (data) => {
     
-        /**
-         * constructs an html elment with clients message content
-         * @param {String} message 
-         * @param {Number} count 
-         * @returns {Node}
-         */
-        function client_message_construct(message, index) {
-            var client_message = client_message_common.cloneNode(true);
-            client_message.hidden = false;
-            client_message.id = 'cm' + index; // cm{index} - client_message_{index}
-            
-            var text_container = client_message.querySelector('.text-container');
-            text_container.innerHTML = message;
-            
-            if (Object.keys(filesData).length != 0) {
-                for (const filename in filesData) {
-                    var files_container = client_message.querySelector('.files-container');
-                    files_container.hidden = false;
-    
-                    const file_container = fileContainer(filesData[filename].src, filename, removable = false)
-    
-                    files_container.appendChild(file_container);
-                }
-                filesData = {};
-                input_files_container.hidden = true;
-                input_files_container.innerHTML = '';
-            }
-    
-            return client_message;
-        }
-        
         const message = data.message;
         const index = data.index;
-    
+        
         const client_message = client_message_construct(message, index);
         messages.appendChild(client_message);
-        updateChat(client_message.outerHTML)
+
+        updateChat(client_message.outerHTML);
     });
     /* SERVER message responding animation */
     socket.on('server-responding', () => {
@@ -434,7 +453,7 @@ if (appName == 'chatbot') {
         server_responding.hidden = false;
     
         messages.appendChild(server_responding);
-        scrollToBottom(messages_container);
+        scrollToBottom(main);
     });
     /* For SERVER message handling */
     socket.on('server-message', (data) => {
@@ -452,49 +471,36 @@ if (appName == 'chatbot') {
         var text_container = server_message.querySelector('.text-container');
         text_container.innerHTML = message;
         
+        addCopyCode(server_message);
         updateChat(server_message.outerHTML)
     });
 }
 else if (appName == 'webuilder') {
+
+    function codeWebviewSwitcher(switcher, code_id, webview_id) {
+        var code = document.getElementById(code_id);
+        var webview = document.getElementById(webview_id);
+        if (code.classList.contains("hidden")) {
+            switcher.classList.remove("active");
+            code.classList.remove("hidden");
+            webview.classList.add("hidden");
+        }
+        else {
+            switcher.classList.add("active");
+            code.classList.add("hidden");
+            webview.classList.remove("hidden");
+        }
+    }
+
     /* For CLIENT message handling */
     socket.on('client-message', (data) => {
-    
-        /**
-         * constructs an html elment with clients message content
-         * @param {String} message 
-         * @param {Number} count 
-         * @returns {Node}
-         */
-        function client_message_construct(message, index) {
-            var client_message = client_message_common.cloneNode(true);
-            client_message.hidden = false;
-            client_message.id = 'cm' + index; // cm{index} - client_message_{index}
-            
-            var text_container = client_message.querySelector('.text-container');
-            text_container.innerHTML = message;
-            
-            if (Object.keys(filesData).length != 0) {
-                for (const filename in filesData) {
-                    var files_container = client_message.querySelector('.files-container');
-                    files_container.hidden = false;
-    
-                    const file_container = fileContainer(filesData[filename].src, filename, removable = false)
-    
-                    files_container.appendChild(file_container);
-                }
-                filesData = {};
-                input_files_container.hidden = true;
-                input_files_container.innerHTML = '';
-            }
-    
-            return client_message;
-        }
         
         const message = data.message;
         const index = data.index;
     
         const client_message = client_message_construct(message, index);
         messages.appendChild(client_message);
+        updateChat(client_message.outerHTML);
     });
     /* SERVER message responding animation */
     socket.on('server-responding', () => {
@@ -503,12 +509,12 @@ else if (appName == 'webuilder') {
         // server_responding.hidden = false;
     
         // messages.appendChild(server_responding);
-        // scrollToBottom(messages_container);
+        // scrollToBottom(main);
     });
     /* For SERVER message handling */
     socket.on('server-message', (data) => {
-        // webview = document.getElementById('webview');
         const message = data.response;
+        var server_response = document.getElementById("server-response");
         var webview = document.getElementById('webview');
         var code_container = document.getElementById('code-container');
 
@@ -517,12 +523,11 @@ else if (appName == 'webuilder') {
 
         if (message.includes("<pre>")) {
             const html_code = server_message.querySelector('pre').innerText.replace('HTML', '');
-            console.log(html_code);
             code_container.innerHTML = message;
             
             webview.srcdoc = html_code;
             // welcoming_message.style.display = 'none';
-            webview.classList.add('active');
+            server_response.classList.add('active');
         }
 
         else if (message.includes("EMPTY")) {
@@ -533,6 +538,7 @@ else if (appName == 'webuilder') {
             errorAlert("Invalid server response, try again or change model, Internal Server Error", 500);
         }
 
+        addCopyCode(code_container);
         updateChat(messages.innerHTML);
     });
 }

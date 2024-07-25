@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Light theme variables */
 /* Dark theme variables */
 /* Default dimensions */
@@ -65,20 +66,58 @@ body pre * {
 }
 body pre {
   background-color: black;
-  padding: calc(var(--small_margin) * 2);
-  padding-top: 0;
-  margin-top: 0;
   border-radius: var(--border_radius);
 }
 body pre .code-header {
   background-color: var(--prompt-color);
-  width: calc(100% + 2 * var(--small_margin) * 2);
-  margin-left: calc(var(--small_margin) * 2 * -1);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--small_margin);
+  height: auto;
   padding: calc(0.5 * var(--small_margin) * 2) calc(var(--small_margin) * 2);
   border-radius: var(--border_radius) var(--border_radius) 0 0;
-  margin-bottom: calc(var(--small_margin) * 2);
-  font-size: var(--p);
   box-shadow: 0 -2px 0 0 var(--prompt-color);
+}
+body pre .code-header .lang {
+  font-size: var(--p);
+}
+body pre .code-header .copy {
+  display: flex;
+  align-items: center;
+  gap: var(--small_margin);
+  cursor: pointer;
+  height: var(--smaller_length);
+  -webkit-width: fit-content;
+  -moz-width: -moz-fit-content;
+  -ms-width: fit-content;
+  -o-width: fit-content;
+  width: fit-content;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+body pre .code-header .copy svg {
+  height: calc(0.5 * var(--small_length));
+  width: auto;
+  fill: var(--text-color);
+}
+body pre .code-header .copy::after {
+  align-self: center;
+  content: "copy";
+}
+body pre .code-header .copy.active::after {
+  content: "✓ copied";
+}
+body pre .code-header .copy.active svg {
+  display: none;
+}
+body pre .code {
+  padding: calc(var(--small_margin) * 2);
+  color: white;
 }
 body h1, body h2, body h3, body h4, body h5, body h6 {
   font-weight: 400 !important;

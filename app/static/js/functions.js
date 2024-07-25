@@ -109,17 +109,28 @@ function errorAlert(error_message, error_code) {
  */
 function changeTheme() {
     document.documentElement.classList.toggle("light-theme");
+    localStorage.setItem("theme", document.documentElement.classList.contains("light-theme") ? "light" : "dark");
 }
 
 /**
  * adjusts correctly Gemini-Sparkle SVG mask on chat div
  * @param {Number} size - sparkle size diameter
  */
-function backgroundGeminiSparkle(size = 100) {
+function backgroundGeminiSparkle() {
 
-    var gemini_sparkle_mask = document.getElementById("gemini-sparkle-mask-chat");
-    var gs_mask_svg = gemini_sparkle_mask.children[0];
+    var gemini_sparkle_chat_mask = document.getElementById("gemini-sparkle-chat-mask");
+    var gs_mask_svg = gemini_sparkle_chat_mask.children[0];
 
-    gs_mask_svg.setAttribute('height', `${size}px`);
-    gs_mask_svg.setAttribute('width', `${size}px`);
+    gs_mask_svg.setAttribute('height', `${100}px`);
+    gs_mask_svg.setAttribute('width', `${100}px`);
+}
+
+
+function copyToClipboard(button, element) {
+    button.classList.add("active");
+    navigator.clipboard.writeText(element.innerText);
+
+    setTimeout(function() {
+        button.classList.remove("active");
+    }, 2500);
 }
