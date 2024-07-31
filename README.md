@@ -4,6 +4,8 @@ The first part of this project was created for the Gemini API competition. The i
 
 # Gemini API apps
 
+[![video link here](https://img.youtube.com/vi/8Tn8KE379XI/0.jpg)](https://www.youtube.com/watch?v=8Tn8KE379XI)
+
 This part of the project contains the client-side JavaScript code for interacting with the Gemini API via a Socket.IO connection. This code powers the front-end of applications built on top of the Gemini API, enabling real-time communication and dynamic content updates.
 
 ## Features
