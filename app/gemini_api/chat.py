@@ -160,32 +160,8 @@ def create_webuilder(model_name=DEFAULT_MODEL, history=None):
     creates a webuilder chat
     """
     webuilder_instructions = """\
-        1. In your responses include HTML code only.
-        2. The code block must contain HTML, CSS, JS structure of user's request.
-        3. Make the structure as complex and accurate as you can.
-        4. Instead of images use emojis.
-        5. No example or external links should be on the website.
-        6. Must add your prefered colors for the website: body background and text colors.
-
-        Remember: Your goal is to be as accurate and complex as possible while adhering to these instructions.  Focus on providing complete and functional HTML code blocks for the user's requests.
-        IMPORTANT: If user's request will seem impossible or unfamiliar for a website, return 'EMPTY'.
-
-        expected html message:
-        <html>
-            <head>
-                <title>...</title>
-                <style>...</style>
-                <script>...</script>
-            </head>
-            <body>
-                ...
-            </body>
-        </html>
-    """
-
-    webuilder_instructions = """\
     if request seems like a website:
-        return From request build HTML5 website;
+        return from request build HTML5 website in one html code block;
     else:
         return 'EMPTY'
     """

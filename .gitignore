@@ -2,6 +2,7 @@
 .env
 .hintrc
 firebase.json
+desktop.ini
 
 /app/fix.txt
 /app/__pycache__

@@ -41,6 +41,7 @@
     }
 }
 
+//Gradient animation
 @mixin gradient_animation($duration, $type: linear, $count: 1) {
     background-size: 200% 100%;
     
@@ -70,6 +71,7 @@
     }
 }
 
+//Glass effect
 @mixin glass($border-radius: 20px, $color:rgb(255, 255, 255), $tint: 0%) {
     background: linear-gradient(135deg, rgba($color, 0.1), rgba($color, 0));
     @include vendor-prefix(backdrop-filter, (blur(10px) brightness(calc(100% - $tint))));

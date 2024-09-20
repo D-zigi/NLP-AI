@@ -111,13 +111,6 @@ header #selected-model {
   opacity: 0.5;
   transition: opacity var(--transition_time), background-color var(--transition_time);
 }
-header #selected-model::after {
-  content: "˅";
-  font-size: var(--p);
-  font-weight: 1000;
-  -webkit-text-stroke: 0.5px;
-  margin-left: 8px;
-}
 header #selected-model:hover {
   opacity: 1;
 }

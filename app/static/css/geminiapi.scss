@@ -106,13 +106,13 @@ header {
         opacity: 0.5;
         transition: opacity var(--transition_time), background-color var(--transition_time);
 
-        &::after {
-            content: '˅';
-            font-size: var(--p);
-            font-weight: 1000;
-            -webkit-text-stroke: 0.5px;
-            margin-left: 8px;
-        }
+        // &::after {
+        //     content: '˅';
+        //     font-size: var(--p);
+        //     font-weight: 1000;
+        //     -webkit-text-stroke: 0.5px;
+        //     margin-left: 8px;
+        // }
         
         &:hover {
             opacity: 1;

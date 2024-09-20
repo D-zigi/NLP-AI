@@ -111,7 +111,7 @@ body {
     }
 
     p {
-        font-size: $p;
+        font-size: var(--p);
     }
 
     img {
