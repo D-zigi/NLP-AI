@@ -30,6 +30,7 @@ html, body {
 }
 
 body {
+    @include vendor-prefix(tap-highlight-color, transparent);
     background-color: var(--primary-color) !important;
     color: var(--text-color) !important;
     

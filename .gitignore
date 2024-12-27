@@ -4,23 +4,14 @@
 firebase.json
 desktop.ini
 
-/app/fix.txt
-/app/__pycache__
-/app/firebase/__pycache__
-/app/gemini_api/__pycache__
-/app/gemini_api/fix.txt
-
-/app/model_kit/__pycache__
+__pycache__
+fix.txt
 
 /app/static/tmp/chatbot-rooms/*
 /app/static/tmp/webuilder-rooms/*
 !/app/static/tmp/chatbot-rooms/null
 !/app/static/tmp/webuilder-rooms/null
 
-/app/static/css/header.css.map
-/app/static/css/styles.css.map
-/app/static/css/error.css.map
-/app/static/css/credits.css.map
-/app/static/css/geminiapi.css.map
+*.css.map
 
 tests.ipynb

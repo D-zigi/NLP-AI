@@ -17,7 +17,7 @@ def base():
     opens base page for the application
     """
     return geminiapi_default()
-    return render_template('base.html')
+    # return render_template('base.html')
 
 @main.route('/about')
 def about():

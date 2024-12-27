@@ -4,6 +4,7 @@ python-dotenv
 # web tools
 markdown
 html-sanitizer
+pygments # code stylize
 
 #server-side
 flask
@@ -21,14 +22,13 @@ beautifulsoup4 # Text scraper from websites
 
 # Math and data visualization
 numpy
-matplotlib
-seaborn
+# matplotlib
+# seaborn
 
 #Data preprocessing and model builing for ML
-nltk # Natural Language Toolkit
-scikit-learn
-tensorflow
-
+# nltk # Natural Language Toolkit
+# scikit-learn
+# tensorflow
 
 # for Gemini
 langchain_core

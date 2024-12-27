@@ -1,12 +1,12 @@
 var old_platform = null
+backgroundGeminiSparkle();
 
 window.onload = function() {
     if (localStorage.getItem("theme") == "light") {changeTheme();} 
     screenWidth = window.innerWidth;
     old_platform = screenWidth <= 800 ? "mobile" : "desktop";
-    
-    backgroundGeminiSparkle();
 }
+
 
 window.onresize = function() {
     screenWidth = window.innerWidth;

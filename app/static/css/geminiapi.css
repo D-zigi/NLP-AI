@@ -569,6 +569,7 @@ div.gemini-sparkle {
   min-height: calc(var(--small_length) + 2 * var(--small_margin));
   height: auto;
   display: flex;
+  justify-content: space-between;
   align-items: flex-end;
   flex-direction: row;
   padding: var(--small_margin);
@@ -591,25 +592,27 @@ div.gemini-sparkle {
   content: "Message Gemini";
   opacity: 0.5;
 }
-.prompt-container .prompt .image-input {
+.prompt-container .prompt .image-input, .prompt-container .prompt .submit {
   cursor: pointer !important;
   height: var(--small_length);
-  transition: opacity var(--transition_time);
   aspect-ratio: 1/1;
-  fill: var(--text-color) !important;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 0.5;
+  transition: opacity var(--transition_time);
 }
-.prompt-container .prompt .image-input:hover {
+.prompt-container .prompt .image-input {
+  opacity: 0.5;
+  fill: var(--text-color) !important;
+}
+.prompt-container .prompt .image-input:active {
   opacity: 1;
   background-color: var(--prompt-color);
 }
 .prompt-container .prompt .image-input svg {
   height: var(--smaller_length);
-  aspect-ratio: 1/1;
+  width: var(--smaller_length);
 }
 .prompt-container .prompt .image-input svg path:nth-child(1) {
   stroke: var(--text-color) !important;
@@ -618,15 +621,7 @@ div.gemini-sparkle {
   fill: var(--text-color) !important;
 }
 .prompt-container .prompt .submit {
-  cursor: pointer !important;
-  transition: opacity var(--transition_time);
   background-color: var(--text-color);
-  border-radius: 50%;
-  height: var(--small_length);
-  aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .prompt-container .prompt .submit svg {
   height: var(--smaller_length);

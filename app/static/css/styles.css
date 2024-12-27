@@ -55,6 +55,11 @@ html, body {
 }
 
 body {
+  -webkit-tap-highlight-color: transparent;
+  -moz-tap-highlight-color: transparent;
+  -ms-tap-highlight-color: transparent;
+  -o-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
   background-color: var(--primary-color) !important;
   color: var(--text-color) !important;
 }
